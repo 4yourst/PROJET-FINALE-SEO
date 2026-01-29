@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rédacteur – Création d'article</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Source Sans 3', sans-serif; }
+  </style>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen">
+  <header class="bg-white border-b border-stone-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-4">
+      <h1 class="text-xl font-bold text-stone-900">Rédacteur</h1>
+      <p class="text-stone-500 text-sm mt-0.5">Création d'article – Score SEO en temps réel</p>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Formulaire -->
+      <div class="lg:col-span-2 space-y-6">
+        <form id="article-form" class="space-y-6">
+          <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-stone-900 mb-4">Contenu</h2>
+            <label class="block text-sm font-medium text-stone-700 mb-1">Titre de l'article</label>
+            <input type="text" id="titre" name="titre" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4" placeholder="Titre affiché">
+            <label class="block text-sm font-medium text-stone-700 mb-1">Contenu (HTML autorisé : &lt;h1&gt;, &lt;p&gt;, &lt;a href="..."&gt;)</label>
+            <textarea id="contenu" name="contenu" rows="12" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" placeholder="<h1>Titre</h1>&#10;<p>Paragraphe avec <a href=&quot;/visitor.html&quot;>lien interne</a>.</p>"></textarea>
+          </div>
+
+          <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-stone-900 mb-4">Champs SEO</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Titre SEO (≤ 60 caractères, avec mot-clé)</label>
+                <input type="text" id="titreSeo" name="titreSeo" maxlength="60" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Titre pour les moteurs de recherche">
+                <p class="text-xs text-stone-500 mt-1"><span id="titreSeo-count">0</span> / 60</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Méta-description (120–160 caractères)</label>
+                <textarea id="metaDescription" name="metaDescription" rows="2" maxlength="160" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Résumé court pour les résultats de recherche"></textarea>
+                <p class="text-xs text-stone-500 mt-1"><span id="meta-count">0</span> / 160 (idéal : 120–160)</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Mot-clé principal</label>
+                <input type="text" id="motClePrincipal" name="motClePrincipal" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="ex: transition énergétique">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">URL (slug SEO-friendly)</label>
+                <input type="text" id="slug" name="slug" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono text-sm" placeholder="mon-article-seo">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-4 items-center">
+            <button type="submit" id="btn-submit" disabled class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              Soumettre à validation
+            </button>
+            <a href="visitor.html" class="px-4 py-2 text-stone-600 hover:text-stone-900 font-medium">Voir le site public</a>
+          </div>
+          <p id="submit-message" class="text-sm text-amber-600 hidden">Le score SEO doit être ≥ 66 % pour pouvoir soumettre.</p>
+        </form>
+      </div>
+
+      <!-- Sidebar : score + checklist -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6 sticky top-4">
+          <h2 class="text-lg font-semibold text-stone-900 mb-4">Score SEO</h2>
+          <div class="flex items-center justify-center mb-6">
+            <div id="score-circle" class="w-28 h-28 rounded-full flex items-center justify-center text-2xl font-bold border-4 border-stone-200">
+              <span id="score-value">0</span> %
+            </div>
+          </div>
+          <p id="score-status" class="text-center text-sm font-medium mb-4">Remplissez les champs pour calculer le score.</p>
+          <h3 class="text-sm font-semibold text-stone-700 mb-2">Checklist des critères</h3>
+          <ul id="criteria-list" class="space-y-1.5 text-sm">
+            <!-- Rempli par JS -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="scoring.js"></script>
+  <script src="app.js"></script>
+  <script>
+    App.setRole('editor');
+
+    const form = document.getElementById('article-form');
+    const btnSubmit = document.getElementById('btn-submit');
+    const submitMessage = document.getElementById('submit-message');
+    const scoreValue = document.getElementById('score-value');
+    const scoreCircle = document.getElementById('score-circle');
+    const scoreStatus = document.getElementById('score-status');
+    const criteriaList = document.getElementById('criteria-list');
+    const titreSeoInput = document.getElementById('titreSeo');
+    const metaInput = document.getElementById('metaDescription');
+    const titreInput = document.getElementById('titre');
+
+    const fields = ['titre', 'titreSeo', 'metaDescription', 'motClePrincipal', 'slug', 'contenu'];
+    const SEUIL = App.getSeuilSoumission();
+
+    function getFormData() {
+      const data = {};
+      fields.forEach(name => {
+        const el = document.getElementById(name) || document.querySelector(`[name="${name}"]`);
+        data[name] = el ? el.value : '';
+      });
+      if (!data.slug && data.titre) data.slug = App.slugify(data.titre);
+      return data;
+    }
+
+    function updateScore() {
+      const data = getFormData();
+      const result = SCORING.calculate(data);
+      const score = result.score;
+      const details = result.details;
+
+      scoreValue.textContent = score;
+      scoreCircle.classList.remove('border-red-400', 'border-amber-400', 'border-emerald-500');
+      if (score < SEUIL) {
+        scoreCircle.classList.add('border-red-400');
+        scoreValue.classList.remove('text-emerald-600', 'text-amber-600');
+        scoreValue.classList.add('text-red-600');
+      } else if (score < 80) {
+        scoreCircle.classList.add('border-amber-400');
+        scoreValue.classList.remove('text-red-600', 'text-emerald-600');
+        scoreValue.classList.add('text-amber-600');
+      } else {
+        scoreCircle.classList.add('border-emerald-500');
+        scoreValue.classList.remove('text-red-600', 'text-amber-600');
+        scoreValue.classList.add('text-emerald-600');
+      }
+
+      if (score < SEUIL) {
+        scoreStatus.textContent = `Score insuffisant (minimum ${SEUIL} % pour soumettre).`;
+        scoreStatus.classList.remove('text-emerald-600');
+        scoreStatus.classList.add('text-amber-600');
+        btnSubmit.disabled = true;
+        submitMessage.classList.remove('hidden');
+      } else {
+        scoreStatus.textContent = 'Vous pouvez soumettre cet article.';
+        scoreStatus.classList.remove('text-amber-600');
+        scoreStatus.classList.add('text-emerald-600');
+        btnSubmit.disabled = false;
+        submitMessage.classList.add('hidden');
+      }
+
+      criteriaList.innerHTML = details.map(d => `
+        <li class="flex items-center gap-2">
+          <span class="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-xs ${d.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'}">${d.ok ? '✓' : '–'}</span>
+          <span class="${d.ok ? 'text-stone-700' : 'text-stone-500'}">${d.label}</span>
+        </li>
+      `).join('');
+    }
+
+    document.getElementById('titreSeo').addEventListener('input', () => {
+      document.getElementById('titreSeo-count').textContent = document.getElementById('titreSeo').value.length;
+      updateScore();
+    });
+    document.getElementById('metaDescription').addEventListener('input', () => {
+      document.getElementById('meta-count').textContent = document.getElementById('metaDescription').value.length;
+      updateScore();
+    });
+    fields.forEach(name => {
+      const el = document.getElementById(name) || document.querySelector(`[name="${name}"]`);
+      if (el) el.addEventListener('input', updateScore);
+    });
+    document.getElementById('slug').addEventListener('blur', () => {
+      const titre = document.getElementById('titre').value;
+      const slug = document.getElementById('slug').value;
+      if (!slug && titre) document.getElementById('slug').value = App.slugify(titre);
+      updateScore();
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = getFormData();
+      const result = SCORING.calculate(data);
+      if (result.score < SEUIL) {
+        submitMessage.classList.remove('hidden');
+        return;
+      }
+      const article = CMS.addArticle({
+        titre: data.titre,
+        titreSeo: data.titreSeo,
+        metaDescription: data.metaDescription,
+        motClePrincipal: data.motClePrincipal,
+        slug: data.slug || App.slugify(data.titre),
+        contenu: data.contenu,
+        score: result.score,
+        criteres: result.criteres,
+      });
+      CMS.submitArticle(article.id);
+      alert('Article soumis à validation. L\'administrateur pourra le certifier ou le refuser.');
+      form.reset();
+      document.getElementById('titreSeo-count').textContent = '0';
+      document.getElementById('meta-count').textContent = '0';
+      updateScore();
+    });
+
+    updateScore();
+  </script>
+</body>
+</html>

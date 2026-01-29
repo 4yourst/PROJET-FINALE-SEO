@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrateur – Validation des articles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Source Sans 3', sans-serif; }
+  </style>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen">
+  <header class="bg-white border-b border-stone-200 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-4">
+      <h1 class="text-xl font-bold text-stone-900">Administrateur</h1>
+      <p class="text-stone-500 text-sm mt-0.5">Validation des articles soumis – Refuser / Modifier / Certifier & publier</p>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    <section id="submitted-list" class="space-y-6">
+      <!-- Liste des articles soumis -->
+    </section>
+    <p id="empty-message" class="text-stone-500 text-center py-12 hidden">Aucun article soumis pour le moment.</p>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="scoring.js"></script>
+  <script src="app.js"></script>
+  <script>
+    App.setRole('admin');
+
+    const listEl = document.getElementById('submitted-list');
+    const emptyMsg = document.getElementById('empty-message');
+
+    function renderList() {
+      const articles = App.getArticlesForAdmin();
+      if (articles.length === 0) {
+        listEl.innerHTML = '';
+        emptyMsg.classList.remove('hidden');
+        return;
+      }
+      emptyMsg.classList.add('hidden');
+      listEl.innerHTML = articles.map(art => {
+        const result = SCORING.calculate(art);
+        const details = result.details;
+        return `
+          <article class="bg-white rounded-lg border border-stone-200 shadow-sm overflow-hidden" data-id="${art.id}">
+            <div class="p-6 border-b border-stone-100 bg-stone-50/50">
+              <div class="flex flex-wrap items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <h2 class="text-lg font-bold text-stone-900">${escapeHtml(art.titre)}</h2>
+                  <p class="text-sm text-stone-500 mt-1">ID ${art.id} · Soumis</p>
+                  <p class="text-stone-600 text-sm mt-2">${escapeHtml(App.getExcerpt(art.contenu, 150))}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${result.score >= 66 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">Score : ${result.score} %</span>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-sm font-semibold text-stone-700 mb-2">Détail SEO (critères)</h3>
+                <ul class="space-y-1.5 text-sm">
+                  ${details.map(d => `
+                    <li class="flex items-center gap-2">
+                      <span class="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-xs ${d.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">${d.ok ? '✓' : '✗'}</span>
+                      ${d.label}
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+              <div>
+                <p class="text-xs text-stone-500 mb-1">Titre SEO : ${escapeHtml(art.titreSeo || '–')}</p>
+                <p class="text-xs text-stone-500 mb-1">Meta : ${escapeHtml((art.metaDescription || '').slice(0, 80))}…</p>
+                <p class="text-xs text-stone-500">Mot-clé : ${escapeHtml(art.motClePrincipal || '–')}</p>
+              </div>
+            </div>
+            <div class="px-6 py-4 bg-stone-50 border-t border-stone-200 flex flex-wrap gap-3">
+              <button type="button" class="btn-refuse px-4 py-2 bg-red-100 text-red-800 font-medium rounded-lg hover:bg-red-200 transition-colors" data-id="${art.id}">Refuser</button>
+              <button type="button" class="btn-modify px-4 py-2 bg-amber-100 text-amber-800 font-medium rounded-lg hover:bg-amber-200 transition-colors" data-id="${art.id}">Modifier</button>
+              <button type="button" class="btn-certify px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors" data-id="${art.id}">Certifier & publier</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      listEl.querySelectorAll('.btn-refuse').forEach(btn => {
+        btn.addEventListener('click', () => refuseArticle(btn.dataset.id));
+      });
+      listEl.querySelectorAll('.btn-modify').forEach(btn => {
+        btn.addEventListener('click', () => toggleModify(btn.dataset.id));
+      });
+      listEl.querySelectorAll('.btn-certify').forEach(btn => {
+        btn.addEventListener('click', () => certifyArticle(btn.dataset.id));
+      });
+    }
+
+    function toggleModify(id) {
+      const art = CMS.getArticleById(id);
+      if (!art || art.statut !== 'submitted') return;
+      const card = listEl.querySelector(`article[data-id="${id}"]`);
+      let formEl = card.querySelector('.admin-edit-form');
+      if (formEl) {
+        formEl.remove();
+        return;
+      }
+      formEl = document.createElement('div');
+      formEl.className = 'admin-edit-form px-6 py-4 bg-amber-50 border-t border-amber-200';
+      formEl.innerHTML = `
+        <h4 class="font-semibold text-stone-800 mb-3">Modifier l'article (champs SEO)</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+          <div><label class="block text-stone-600 mb-0.5">Titre</label><input type="text" class="edit-titre w-full px-2 py-1.5 border rounded" value="${escapeHtml(art.titre)}"></div>
+          <div><label class="block text-stone-600 mb-0.5">Titre SEO</label><input type="text" class="edit-titreSeo w-full px-2 py-1.5 border rounded" value="${escapeHtml(art.titreSeo || '')}" maxlength="60"></div>
+          <div class="md:col-span-2"><label class="block text-stone-600 mb-0.5">Méta-description</label><textarea class="edit-metaDescription w-full px-2 py-1.5 border rounded" rows="2">${escapeHtml(art.metaDescription || '')}</textarea></div>
+          <div><label class="block text-stone-600 mb-0.5">Mot-clé principal</label><input type="text" class="edit-motClePrincipal w-full px-2 py-1.5 border rounded" value="${escapeHtml(art.motClePrincipal || '')}"></div>
+          <div><label class="block text-stone-600 mb-0.5">Slug</label><input type="text" class="edit-slug w-full px-2 py-1.5 border rounded font-mono" value="${escapeHtml(art.slug || '')}"></div>
+        </div>
+        <div class="mt-3"><label class="block text-stone-600 mb-0.5">Contenu (HTML)</label><textarea class="edit-contenu w-full px-2 py-1.5 border rounded font-mono text-xs" rows="6">${escapeHtml(art.contenu || '')}</textarea></div>
+        <div class="mt-3 flex gap-2">
+          <button type="button" class="btn-save-modify px-3 py-1.5 bg-amber-600 text-white rounded font-medium text-sm hover:bg-amber-700" data-id="${id}">Enregistrer les modifications</button>
+          <button type="button" class="btn-cancel-modify px-3 py-1.5 bg-stone-200 text-stone-700 rounded font-medium text-sm hover:bg-stone-300">Fermer</button>
+        </div>
+      `;
+      card.appendChild(formEl);
+      formEl.querySelector('.btn-save-modify').addEventListener('click', () => {
+        const updates = {
+          titre: formEl.querySelector('.edit-titre').value,
+          titreSeo: formEl.querySelector('.edit-titreSeo').value,
+          metaDescription: formEl.querySelector('.edit-metaDescription').value,
+          motClePrincipal: formEl.querySelector('.edit-motClePrincipal').value,
+          slug: formEl.querySelector('.edit-slug').value,
+          contenu: formEl.querySelector('.edit-contenu').value,
+        };
+        CMS.updateArticle(id, updates);
+        formEl.remove();
+        renderList();
+      });
+      formEl.querySelector('.btn-cancel-modify').addEventListener('click', () => formEl.remove());
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function refuseArticle(id) {
+      if (!confirm('Refuser cet article ? Il repassera en statut "refusé" pour le rédacteur.')) return;
+      CMS.rejectArticle(id);
+      renderList();
+    }
+
+    function certifyArticle(id) {
+      const art = CMS.getArticleById(id);
+      if (!art) return;
+      const result = SCORING.calculate(art);
+      if (!confirm(`Certifier et publier « ${art.titre } » ? Score SEO : ${result.score} %. L'article sera visible sur la page visiteur et les champs SEO seront gelés.`)) return;
+      CMS.certifyArticle(id, result.score, result.criteres);
+      renderList();
+    }
+
+    renderList();
+  </script>
+</body>
+</html>
