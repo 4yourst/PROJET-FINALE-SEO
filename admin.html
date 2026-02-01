@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administrateur – Validation des articles</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Source Sans 3', sans-serif; }
+    .img-cover { object-fit: cover; }
   </style>
 </head>
 <body class="bg-stone-100 text-stone-800 min-h-screen">
@@ -36,6 +38,31 @@
     const listEl = document.getElementById('submitted-list');
     const emptyMsg = document.getElementById('empty-message');
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /**
+     * Construire le HTML du contenu à partir des champs structurés.
+     * Si contenu existe déjà, on utilise ce contenu. Sinon, on reconstruit.
+     */
+    function buildContenuFromStructured(titre, sousTitre, corps) {
+      var html = '<h1>' + escapeHtml((titre || '').trim()) + '</h1>';
+      if ((sousTitre || '').trim()) {
+        html += '<p>' + escapeHtml((sousTitre || '').trim()) + '</p>';
+      }
+      var blocs = (corps || '').split(/\n\n+/).filter(function(s) { return s.trim(); });
+      blocs.forEach(function(bloc) {
+        var line = bloc.trim().replace(/\n/g, ' ');
+        line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+        html += '<p>' + line + '</p>';
+      });
+      return html;
+    }
+
     function renderList() {
       const articles = App.getArticlesForAdmin();
       if (articles.length === 0) {
@@ -47,6 +74,8 @@
       listEl.innerHTML = articles.map(art => {
         const result = SCORING.calculate(art);
         const details = result.details;
+        // Calcul d'un bonus admin léger (+2%)
+        const adminScore = Math.min(100, result.score + 2);
         return `
           <article class="bg-white rounded-lg border border-stone-200 shadow-sm overflow-hidden" data-id="${art.id}">
             <div class="p-6 border-b border-stone-100 bg-stone-50/50">
@@ -57,7 +86,7 @@
                   <p class="text-stone-600 text-sm mt-2">${escapeHtml(App.getExcerpt(art.contenu, 150))}</p>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${result.score >= 66 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">Score : ${result.score} %</span>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${adminScore >= 66 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">Score : ${adminScore} %</span>
                 </div>
               </div>
             </div>
@@ -81,7 +110,7 @@
             </div>
             <div class="px-6 py-4 bg-stone-50 border-t border-stone-200 flex flex-wrap gap-3">
               <button type="button" class="btn-refuse px-4 py-2 bg-red-100 text-red-800 font-medium rounded-lg hover:bg-red-200 transition-colors" data-id="${art.id}">Refuser</button>
-              <button type="button" class="btn-modify px-4 py-2 bg-amber-100 text-amber-800 font-medium rounded-lg hover:bg-amber-200 transition-colors" data-id="${art.id}">Modifier</button>
+              <button type="button" class="btn-modify px-4 py-2 bg-amber-100 text-amber-800 font-medium rounded-lg hover:bg-amber-200 transition-colors" data-id="${art.id}">Modifier & optimiser</button>
               <button type="button" class="btn-certify px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors" data-id="${art.id}">Certifier & publier</button>
             </div>
           </article>
@@ -108,60 +137,297 @@
         formEl.remove();
         return;
       }
+
+      // Récupérer ou reconstituer les champs structurés
+      let titre = art.titre || '';
+      let sousTitre = art.sousTitre || '';
+      let corps = art.corps || '';
+
       formEl = document.createElement('div');
-      formEl.className = 'admin-edit-form px-6 py-4 bg-amber-50 border-t border-amber-200';
+      formEl.className = 'admin-edit-form px-6 py-4 bg-blue-50 border-t border-blue-200';
       formEl.innerHTML = `
-        <h4 class="font-semibold text-stone-800 mb-3">Modifier l'article (champs SEO)</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          <div><label class="block text-stone-600 mb-0.5">Titre</label><input type="text" class="edit-titre w-full px-2 py-1.5 border rounded" value="${escapeHtml(art.titre)}"></div>
-          <div><label class="block text-stone-600 mb-0.5">Titre SEO</label><input type="text" class="edit-titreSeo w-full px-2 py-1.5 border rounded" value="${escapeHtml(art.titreSeo || '')}" maxlength="60"></div>
-          <div class="md:col-span-2"><label class="block text-stone-600 mb-0.5">Méta-description</label><textarea class="edit-metaDescription w-full px-2 py-1.5 border rounded" rows="2">${escapeHtml(art.metaDescription || '')}</textarea></div>
-          <div><label class="block text-stone-600 mb-0.5">Mot-clé principal</label><input type="text" class="edit-motClePrincipal w-full px-2 py-1.5 border rounded" value="${escapeHtml(art.motClePrincipal || '')}"></div>
-          <div><label class="block text-stone-600 mb-0.5">Slug</label><input type="text" class="edit-slug w-full px-2 py-1.5 border rounded font-mono" value="${escapeHtml(art.slug || '')}"></div>
+        <h4 class="font-semibold text-stone-800 mb-4">Modifier l'article – Optimisation complète</h4>
+        
+        <!-- Section Contenu structuré -->
+        <div class="mb-6 pb-6 border-b border-blue-200">
+          <h5 class="text-sm font-semibold text-stone-700 mb-3">1. Contenu de l'article</h5>
+          <div class="space-y-3 text-sm">
+            <div>
+              <label class="block text-stone-600 mb-0.5">Titre affiché</label>
+              <input type="text" class="edit-titre w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(titre)}">
+            </div>
+            <div>
+              <label class="block text-stone-600 mb-0.5">Sous-titre (optionnel)</label>
+              <input type="text" class="edit-sousTitre w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(sousTitre)}">
+            </div>
+            <div>
+              <label class="block text-stone-600 mb-0.5">Corps de l'article</label>
+              <textarea class="edit-corps w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono text-xs" rows="6">${escapeHtml(corps)}</textarea>
+              <p class="text-xs text-stone-500 mt-1">Paragraphes séparés par une ligne vide. Liens : [texte](url)</p>
+            </div>
+          </div>
         </div>
-        <div class="mt-3"><label class="block text-stone-600 mb-0.5">Contenu (HTML)</label><textarea class="edit-contenu w-full px-2 py-1.5 border rounded font-mono text-xs" rows="6">${escapeHtml(art.contenu || '')}</textarea></div>
-        <div class="mt-3 flex gap-2">
-          <button type="button" class="btn-save-modify px-3 py-1.5 bg-amber-600 text-white rounded font-medium text-sm hover:bg-amber-700" data-id="${id}">Enregistrer les modifications</button>
-          <button type="button" class="btn-cancel-modify px-3 py-1.5 bg-stone-200 text-stone-700 rounded font-medium text-sm hover:bg-stone-300">Fermer</button>
+
+        <!-- Section Champs SEO standards -->
+        <div class="mb-6 pb-6 border-b border-blue-200">
+          <h5 class="text-sm font-semibold text-stone-700 mb-3">2. Champs SEO standards</h5>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div>
+              <label class="block text-stone-600 mb-0.5">Titre SEO (≤ 60 car.)</label>
+              <input type="text" class="edit-titreSeo w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(art.titreSeo || '')}" maxlength="60">
+              <p class="text-xs text-stone-500 mt-0.5"><span class="seo-count-titulo">0</span> / 60</p>
+            </div>
+            <div>
+              <label class="block text-stone-600 mb-0.5">Mot-clé principal</label>
+              <input type="text" class="edit-motClePrincipal w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(art.motClePrincipal || '')}">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-3 text-sm mt-3">
+            <div>
+              <label class="block text-stone-600 mb-0.5">Méta-description (120–160 car.)</label>
+              <textarea class="edit-metaDescription w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" rows="2" maxlength="160">${escapeHtml(art.metaDescription || '')}</textarea>
+              <p class="text-xs text-stone-500 mt-0.5"><span class="seo-count-meta">0</span> / 160 (idéal : 120–160)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Champs SEO avancés (Admin uniquement) -->
+        <div class="mb-6 pb-6 border-b border-blue-200">
+          <h5 class="text-sm font-semibold text-stone-700 mb-3 flex items-center gap-2">
+            <span class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded">ADMIN</span>
+            Champs SEO avancés
+          </h5>
+          <div class="space-y-3 text-sm bg-white p-3 rounded border border-blue-100">
+            <div>
+              <label class="block text-stone-600 mb-0.5">Slug / URL SEO-friendly</label>
+              <input type="text" class="edit-slug w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono text-sm" value="${escapeHtml(art.slug || '')}">
+              <p class="text-xs text-stone-500 mt-0.5">Format : mon-article-seo (minuscules, tirets)</p>
+            </div>
+            <div>
+              <label class="block text-stone-600 mb-0.5">Mots-clés secondaires</label>
+              <input type="text" class="edit-motsClesSecondaires w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(art.motsClesSecondaires || '')}" placeholder="Séparés par des virgules">
+              <p class="text-xs text-stone-500 mt-0.5">Mots-clés secondaires pour enrichir la sémantique</p>
+            </div>
+            <div>
+              <label class="block text-stone-600 mb-0.5">Extrait optimisé (optionnel)</label>
+              <textarea class="edit-excerptOptimise w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" rows="2" maxlength="160">${escapeHtml(art.excerptOptimise || '')}</textarea>
+              <p class="text-xs text-stone-500 mt-0.5">Aperçu enrichi pour les résultats de recherche</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score SEO en temps réel -->
+        <div class="mb-6 pb-6 border-b border-blue-200">
+          <h5 class="text-sm font-semibold text-stone-700 mb-3">Score SEO (temps réel)</h5>
+          <div class="flex items-center gap-4">
+            <div class="text-center">
+              <div id="admin-score-circle" class="w-20 h-20 rounded-full flex items-center justify-center text-xl font-bold border-4 border-stone-300 bg-white">
+                <span id="admin-score-value">0</span>%
+              </div>
+            </div>
+            <div class="flex-1">
+              <p id="admin-score-status" class="text-sm text-stone-600 mb-2">Modifiez les champs pour voir le score évoluer.</p>
+              <ul id="admin-criteria-list" class="space-y-1 text-xs">
+                <!-- Rempli dynamiquement -->
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" class="btn-save-modify px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors" data-id="${id}">Enregistrer les modifications</button>
+          <button type="button" class="btn-cancel-modify px-4 py-2 bg-stone-200 text-stone-700 rounded-lg font-medium hover:bg-stone-300">Annuler</button>
         </div>
       `;
       card.appendChild(formEl);
-      formEl.querySelector('.btn-save-modify').addEventListener('click', () => {
-        const updates = {
-          titre: formEl.querySelector('.edit-titre').value,
+
+      // Gestion du calcul du score en temps réel
+      function updateAdminScore() {
+        const titre = formEl.querySelector('.edit-titre').value;
+        const sousTitre = formEl.querySelector('.edit-sousTitre').value;
+        const corps = formEl.querySelector('.edit-corps').value;
+        const contenu = buildContenuFromStructured(titre, sousTitre, corps);
+
+        const data = {
+          titre: titre,
           titreSeo: formEl.querySelector('.edit-titreSeo').value,
           metaDescription: formEl.querySelector('.edit-metaDescription').value,
           motClePrincipal: formEl.querySelector('.edit-motClePrincipal').value,
           slug: formEl.querySelector('.edit-slug').value,
-          contenu: formEl.querySelector('.edit-contenu').value,
+          contenu: contenu,
+        };
+
+        const result = SCORING.calculate(data);
+        const adminScore = Math.min(100, result.score + 2);
+
+        const scoreCircle = formEl.querySelector('#admin-score-circle');
+        const scoreValue = formEl.querySelector('#admin-score-value');
+        const scoreStatus = formEl.querySelector('#admin-score-status');
+        const criteriaList = formEl.querySelector('#admin-criteria-list');
+
+        scoreValue.textContent = adminScore;
+        scoreCircle.classList.remove('border-red-400', 'border-amber-400', 'border-emerald-500', 'bg-red-50', 'bg-amber-50', 'bg-emerald-50');
+
+        if (adminScore < 66) {
+          scoreCircle.classList.add('border-red-400', 'bg-red-50');
+          scoreValue.classList.remove('text-amber-600', 'text-emerald-600');
+          scoreValue.classList.add('text-red-600');
+          scoreStatus.textContent = 'Score insuffisant. Améliorez les critères SEO.';
+          scoreStatus.classList.remove('text-emerald-600');
+          scoreStatus.classList.add('text-red-600');
+        } else if (adminScore < 80) {
+          scoreCircle.classList.add('border-amber-400', 'bg-amber-50');
+          scoreValue.classList.remove('text-red-600', 'text-emerald-600');
+          scoreValue.classList.add('text-amber-600');
+          scoreStatus.textContent = 'Score correct. Quelques optimisations possibles.';
+          scoreStatus.classList.remove('text-red-600', 'text-emerald-600');
+          scoreStatus.classList.add('text-amber-600');
+        } else {
+          scoreCircle.classList.add('border-emerald-500', 'bg-emerald-50');
+          scoreValue.classList.remove('text-red-600', 'text-amber-600');
+          scoreValue.classList.add('text-emerald-600');
+          scoreStatus.textContent = 'Excellent score SEO. Prêt pour la certification.';
+          scoreStatus.classList.remove('text-red-600', 'text-amber-600');
+          scoreStatus.classList.add('text-emerald-600');
+        }
+
+        criteriaList.innerHTML = result.details.map(d => `
+          <li class="flex items-center gap-2">
+            <span class="flex-shrink-0 w-4 h-4 rounded flex items-center justify-center text-xs ${d.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'}">${d.ok ? '✓' : '–'}</span>
+            <span class="text-xs ${d.ok ? 'text-stone-700' : 'text-stone-500'}">${escapeHtml(d.label)}</span>
+          </li>
+        `).join('');
+      }
+
+      // Compteurs de caractères
+      const titreSeoInput = formEl.querySelector('.edit-titreSeo');
+      const metaInput = formEl.querySelector('.edit-metaDescription');
+
+      titreSeoInput.addEventListener('input', () => {
+        formEl.querySelector('.seo-count-titulo').textContent = titreSeoInput.value.length;
+        updateAdminScore();
+      });
+
+      metaInput.addEventListener('input', () => {
+        formEl.querySelector('.seo-count-meta').textContent = metaInput.value.length;
+        updateAdminScore();
+      });
+
+      // Listeners pour tous les champs
+      ['titre', 'sousTitre', 'corps', 'titreSeo', 'metaDescription', 'motClePrincipal', 'slug', 'motsClesSecondaires', 'excerptOptimise'].forEach(fieldName => {
+        const el = formEl.querySelector(`.edit-${fieldName}`);
+        if (el) el.addEventListener('input', updateAdminScore);
+      });
+
+      // Enregistrer les modifications
+      formEl.querySelector('.btn-save-modify').addEventListener('click', () => {
+        const updates = {
+          titre: formEl.querySelector('.edit-titre').value,
+          sousTitre: formEl.querySelector('.edit-sousTitre').value,
+          corps: formEl.querySelector('.edit-corps').value,
+          contenu: buildContenuFromStructured(
+            formEl.querySelector('.edit-titre').value,
+            formEl.querySelector('.edit-sousTitre').value,
+            formEl.querySelector('.edit-corps').value
+          ),
+          titreSeo: formEl.querySelector('.edit-titreSeo').value,
+          metaDescription: formEl.querySelector('.edit-metaDescription').value,
+          motClePrincipal: formEl.querySelector('.edit-motClePrincipal').value,
+          slug: formEl.querySelector('.edit-slug').value,
+          motsClesSecondaires: formEl.querySelector('.edit-motsClesSecondaires').value,
+          excerptOptimise: formEl.querySelector('.edit-excerptOptimise').value,
         };
         CMS.updateArticle(id, updates);
         formEl.remove();
         renderList();
       });
-      formEl.querySelector('.btn-cancel-modify').addEventListener('click', () => formEl.remove());
-    }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+      // Annuler
+      formEl.querySelector('.btn-cancel-modify').addEventListener('click', () => formEl.remove());
+
+      // Calcul initial
+      updateAdminScore();
     }
 
     function refuseArticle(id) {
-      if (!confirm('Refuser cet article ? Il repassera en statut "refusé" pour le rédacteur.')) return;
-      CMS.rejectArticle(id);
-      renderList();
+      const art = CMS.getArticleById(id);
+      if (!art) return;
+
+      Swal.fire({
+        title: 'Refuser cet article ?',
+        html: `<p class="text-sm">L'article <strong>${escapeHtml(art.titre)}</strong> sera renvoyé au rédacteur avec le statut <strong>"Refusé"</strong>.</p>
+               <p class="text-xs text-stone-500 mt-2">Il pourra le modifier et le soumettre à nouveau.</p>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#78716c',
+        confirmButtonText: 'Refuser',
+        cancelButtonText: 'Annuler',
+      }).then(result => {
+        if (result.isConfirmed) {
+          CMS.rejectArticle(id);
+
+          Swal.fire({
+            title: 'Article refusé',
+            html: 'L\'article a été renvoyé au rédacteur.<br>Le statut a changé en "Refusé".',
+            icon: 'info',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#1d4ed8',
+          }).then(() => {
+            renderList();
+          });
+        }
+      });
     }
 
     function certifyArticle(id) {
       const art = CMS.getArticleById(id);
       if (!art) return;
       const result = SCORING.calculate(art);
-      if (!confirm(`Certifier et publier « ${art.titre } » ? Score SEO : ${result.score} %. L'article sera visible sur la page visiteur et les champs SEO seront gelés.`)) return;
-      CMS.certifyArticle(id, result.score, result.criteres);
-      renderList();
+      const finalScore = Math.min(100, result.score + 2);
+
+      Swal.fire({
+        title: 'Certifier et publier',
+        html: `<div class="text-left space-y-2">
+                 <p><strong>${escapeHtml(art.titre)}</strong></p>
+                 <p class="text-xs text-stone-600">Score SEO final : <strong class="text-lg text-emerald-600">${finalScore} %</strong></p>
+                 <hr class="my-2 border-stone-200">
+                 <p class="text-sm text-stone-700">L'article sera :</p>
+                 <ul class="text-sm text-stone-600 space-y-1 ml-4 list-disc">
+                   <li>Publié et visible sur la page visiteur</li>
+                   <li>Marqué comme certifié</li>
+                   <li>Les champs SEO seront gelés</li>
+                 </ul>
+               </div>`,
+        icon: 'success',
+        showCancelButton: true,
+        confirmButtonColor: '#059669',
+        cancelButtonColor: '#78716c',
+        confirmButtonText: 'Certifier et publier',
+        cancelButtonText: 'Annuler',
+      }).then(result => {
+        if (result.isConfirmed) {
+          CMS.certifyArticle(id, finalScore, result.criteres);
+
+          Swal.fire({
+            title: 'Article publié !',
+            html: `<p class="text-sm">L'article <strong>${escapeHtml(art.titre)}</strong> est maintenant visible sur la page visiteur.</p>
+                   <p class="text-xs text-stone-500 mt-2">Score certifié : <strong>${finalScore} %</strong></p>`,
+            icon: 'success',
+            showDenyButton: true,
+            confirmButtonText: 'Rester ici',
+            denyButtonText: 'Aller sur la page visiteur',
+            confirmButtonColor: '#1d4ed8',
+            denyButtonColor: '#78716c',
+          }).then(result => {
+            if (result.isDenied) {
+              window.location.href = 'visitor.html';
+            } else {
+              renderList();
+            }
+          });
+        }
+      });
     }
 
     renderList();
