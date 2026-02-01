@@ -233,6 +233,38 @@
       }).join('');
     }
 
+    /**
+     * Compresse l'image pour réduire la taille en base64 et garantir la persistance localStorage.
+     * Max 1200px de large, JPEG 0.85. Formats courants gérés (JPEG, PNG, WebP).
+     */
+    function compressImageAsDataUrl(file, maxWidth, quality, callback) {
+      var img = document.createElement('img');
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth;
+        var h = img.naturalHeight;
+        if (w > maxWidth) {
+          h = Math.round((h * maxWidth) / w);
+          w = maxWidth;
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', quality);
+        callback(dataUrl);
+      };
+      img.onerror = function() {
+        URL.revokeObjectURL(url);
+        var reader = new FileReader();
+        reader.onload = function() { callback(reader.result); };
+        reader.readAsDataURL(file);
+      };
+      img.src = url;
+    }
+
     // Image de couverture
     imageCoverInput.addEventListener('change', function() {
       var file = this.files && this.files[0];
@@ -242,14 +274,12 @@
         btnRemoveImage.classList.add('hidden');
         return;
       }
-      var reader = new FileReader();
-      reader.onload = function() {
-        coverImageDataUrl = reader.result;
+      compressImageAsDataUrl(file, 1200, 0.85, function(dataUrl) {
+        coverImageDataUrl = dataUrl;
         imagePreviewImg.src = coverImageDataUrl;
         imagePreview.classList.remove('hidden');
         btnRemoveImage.classList.remove('hidden');
-      };
-      reader.readAsDataURL(file);
+      });
     });
 
     btnRemoveImage.addEventListener('click', function() {

@@ -6,6 +6,8 @@
 const CMS = {
   /** Clé localStorage pour partager les données entre les pages */
   STORAGE_KEY: 'cms_articles_data',
+  /** Clé séparée pour les images (évite dépassement quota localStorage sur gros base64) */
+  IMAGES_KEY: 'cms_articles_images',
 
   /** Prochain id pour les nouveaux articles */
   nextId: 100,
@@ -16,35 +18,60 @@ const CMS = {
    */
   articles: [],
 
-  /** Sauvegarder en localStorage pour que toutes les pages voient les mêmes données */
+  /** Sauvegarder en localStorage : articles sans imageData (clé principale) + images (clé séparée) */
   save() {
     if (typeof localStorage === 'undefined') return;
     try {
+      const articlesForStorage = this.articles.map(function(a) {
+        var rest = Object.assign({}, a);
+        delete rest.imageData;
+        return rest;
+      });
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
-        articles: this.articles,
+        articles: articlesForStorage,
         nextId: this.nextId,
       }));
+      var imgObj = {};
+      this.articles.forEach(function(a) {
+        if (a.imageData) imgObj[a.id] = a.imageData;
+      });
+      try {
+        localStorage.setItem(this.IMAGES_KEY, JSON.stringify(imgObj));
+      } catch (imgErr) {
+        console.warn('CMS.save (images):', imgErr);
+      }
     } catch (e) {
       console.warn('CMS.save:', e);
     }
   },
 
-  /** Charger depuis localStorage */
+  /** Charger depuis localStorage puis réinjecter les images */
   load() {
     if (typeof localStorage === 'undefined') return false;
     try {
-      const raw = localStorage.getItem(this.STORAGE_KEY);
+      var raw = localStorage.getItem(this.STORAGE_KEY);
       if (!raw) return false;
-      const data = JSON.parse(raw);
-      if (Array.isArray(data.articles) && data.articles.length >= 0) {
-        this.articles = data.articles;
-        this.nextId = typeof data.nextId === 'number' ? data.nextId : 100;
-        return true;
+      var data = JSON.parse(raw);
+      if (!Array.isArray(data.articles)) return false;
+      this.articles = data.articles;
+      this.nextId = typeof data.nextId === 'number' ? data.nextId : 100;
+      var rawImg = localStorage.getItem(this.IMAGES_KEY);
+      if (rawImg) {
+        try {
+          var imgObj = JSON.parse(rawImg);
+          this.articles.forEach(function(a) {
+            var data = imgObj[a.id] || imgObj[String(a.id)];
+            if (data) a.imageData = data;
+          });
+        } catch (imgErr) {
+          console.warn('CMS.load (images):', imgErr);
+        }
       }
+      return true;
     } catch (e) {
       console.warn('CMS.load:', e);
+      return false;
     }
-    return false;
   },
 
   /** Initialisation : démo si premier chargement, sinon données localStorage */
