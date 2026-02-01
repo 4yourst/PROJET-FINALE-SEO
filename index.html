@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rédacteur – Création d'article</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Source Sans 3', sans-serif; }
+    .img-cover { object-fit: cover; }
   </style>
 </head>
 <body class="bg-stone-100 text-stone-800 min-h-screen">
@@ -25,14 +27,47 @@
       <!-- Formulaire -->
       <div class="lg:col-span-2 space-y-6">
         <form id="article-form" class="space-y-6">
+          <!-- Image de couverture -->
           <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6">
-            <h2 class="text-lg font-semibold text-stone-900 mb-4">Contenu</h2>
-            <label class="block text-sm font-medium text-stone-700 mb-1">Titre de l'article</label>
-            <input type="text" id="titre" name="titre" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4" placeholder="Titre affiché">
-            <label class="block text-sm font-medium text-stone-700 mb-1">Contenu (HTML autorisé : &lt;h1&gt;, &lt;p&gt;, &lt;a href="..."&gt;)</label>
-            <textarea id="contenu" name="contenu" rows="12" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" placeholder="<h1>Titre</h1>&#10;<p>Paragraphe avec <a href=&quot;/visitor.html&quot;>lien interne</a>.</p>"></textarea>
+            <h2 class="text-lg font-semibold text-stone-900 mb-4">Image de couverture</h2>
+            <p class="text-sm text-stone-500 mb-3">Image principale de l'article (bannière). Optionnel.</p>
+            <div class="flex flex-col sm:flex-row gap-4 items-start">
+              <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 rounded-lg text-sm font-medium text-stone-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Choisir une image
+                <input type="file" id="imageCover" name="imageCover" accept="image/*" class="hidden">
+              </label>
+              <button type="button" id="btn-remove-image" class="hidden text-sm font-medium text-red-600 hover:text-red-700">Supprimer l'image</button>
+            </div>
+            <div id="image-preview" class="mt-4 hidden">
+              <p class="text-xs text-stone-500 mb-2">Aperçu :</p>
+              <div class="aspect-video max-w-md bg-stone-200 rounded-lg overflow-hidden">
+                <img id="image-preview-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Aperçu" class="w-full h-full img-cover">
+              </div>
+            </div>
           </div>
 
+          <!-- Contenu structuré (sans HTML) -->
+          <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-stone-900 mb-4">Contenu de l'article</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Titre de l'article</label>
+                <input type="text" id="titre" name="titre" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Titre principal affiché">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Sous-titre <span class="text-stone-400 font-normal">(optionnel)</span></label>
+                <input type="text" id="sousTitre" name="sousTitre" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Courte accroche ou sous-titre">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Corps de l'article</label>
+                <textarea id="corps" name="corps" rows="10" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Écrivez vos paragraphes. Séparez chaque paragraphe par une ligne vide.&#10;&#10;Pour un lien, utilisez : [texte du lien](url)&#10;Exemple : [en savoir plus](/visitor.html)"></textarea>
+                <p class="text-xs text-stone-500 mt-1">Un paragraphe = un bloc de texte. Ligne vide = nouveau paragraphe. Liens : [texte](url)</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Champs SEO -->
           <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6">
             <h2 class="text-lg font-semibold text-stone-900 mb-4">Champs SEO</h2>
             <div class="space-y-4">
@@ -59,7 +94,7 @@
 
           <div class="flex flex-wrap gap-4 items-center">
             <button type="submit" id="btn-submit" disabled class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-              Soumettre à validation
+              Soumettre à l'admin
             </button>
             <a href="visitor.html" class="px-4 py-2 text-stone-600 hover:text-stone-900 font-medium">Voir le site public</a>
           </div>
@@ -99,28 +134,66 @@
     const scoreCircle = document.getElementById('score-circle');
     const scoreStatus = document.getElementById('score-status');
     const criteriaList = document.getElementById('criteria-list');
-    const titreSeoInput = document.getElementById('titreSeo');
-    const metaInput = document.getElementById('metaDescription');
-    const titreInput = document.getElementById('titre');
+    const imageCoverInput = document.getElementById('imageCover');
+    const imagePreview = document.getElementById('image-preview');
+    const imagePreviewImg = document.getElementById('image-preview-img');
+    const btnRemoveImage = document.getElementById('btn-remove-image');
 
-    const fields = ['titre', 'titreSeo', 'metaDescription', 'motClePrincipal', 'slug', 'contenu'];
+    /** Image de couverture : stockée en base64 (data URL) pour association à l'article */
+    let coverImageDataUrl = null;
+
     const SEUIL = App.getSeuilSoumission();
 
-    function getFormData() {
-      const data = {};
-      fields.forEach(name => {
-        const el = document.getElementById(name) || document.querySelector(`[name="${name}"]`);
-        data[name] = el ? el.value : '';
+    /** Échapper HTML pour affichage */
+    function escapeHtml(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /** Construire le HTML du contenu à partir des champs structurés (titre, sous-titre, corps). Liens : [texte](url) */
+    function buildContenuFromStructured(titre, sousTitre, corps) {
+      var html = '<h1>' + escapeHtml((titre || '').trim()) + '</h1>';
+      if ((sousTitre || '').trim()) {
+        html += '<p>' + escapeHtml((sousTitre || '').trim()) + '</p>';
+      }
+      var blocs = (corps || '').split(/\n\n+/).filter(function(s) { return s.trim(); });
+      blocs.forEach(function(bloc) {
+        var line = bloc.trim().replace(/\n/g, ' ');
+        line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+        html += '<p>' + line + '</p>';
       });
+      return html;
+    }
+
+    const fieldsForScore = ['titre', 'sousTitre', 'corps', 'titreSeo', 'metaDescription', 'motClePrincipal', 'slug'];
+
+    function getFormData() {
+      var titre = (document.getElementById('titre') && document.getElementById('titre').value) || '';
+      var sousTitre = (document.getElementById('sousTitre') && document.getElementById('sousTitre').value) || '';
+      var corps = (document.getElementById('corps') && document.getElementById('corps').value) || '';
+      var contenu = buildContenuFromStructured(titre, sousTitre, corps);
+      var data = {
+        titre: titre,
+        sousTitre: sousTitre,
+        corps: corps,
+        contenu: contenu,
+        titreSeo: (document.getElementById('titreSeo') && document.getElementById('titreSeo').value) || '',
+        metaDescription: (document.getElementById('metaDescription') && document.getElementById('metaDescription').value) || '',
+        motClePrincipal: (document.getElementById('motClePrincipal') && document.getElementById('motClePrincipal').value) || '',
+        slug: (document.getElementById('slug') && document.getElementById('slug').value) || '',
+      };
       if (!data.slug && data.titre) data.slug = App.slugify(data.titre);
+      if (coverImageDataUrl) data.imageData = coverImageDataUrl;
       return data;
     }
 
     function updateScore() {
-      const data = getFormData();
-      const result = SCORING.calculate(data);
-      const score = result.score;
-      const details = result.details;
+      var data = getFormData();
+      var result = SCORING.calculate(data);
+      var score = result.score;
+      var details = result.details;
 
       scoreValue.textContent = score;
       scoreCircle.classList.remove('border-red-400', 'border-amber-400', 'border-emerald-500');
@@ -139,7 +212,7 @@
       }
 
       if (score < SEUIL) {
-        scoreStatus.textContent = `Score insuffisant (minimum ${SEUIL} % pour soumettre).`;
+        scoreStatus.textContent = 'Score insuffisant (minimum ' + SEUIL + ' % pour soumettre).';
         scoreStatus.classList.remove('text-emerald-600');
         scoreStatus.classList.add('text-amber-600');
         btnSubmit.disabled = true;
@@ -152,42 +225,114 @@
         submitMessage.classList.add('hidden');
       }
 
-      criteriaList.innerHTML = details.map(d => `
-        <li class="flex items-center gap-2">
-          <span class="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-xs ${d.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'}">${d.ok ? '✓' : '–'}</span>
-          <span class="${d.ok ? 'text-stone-700' : 'text-stone-500'}">${d.label}</span>
-        </li>
-      `).join('');
+      criteriaList.innerHTML = details.map(function(d) {
+        return '<li class="flex items-center gap-2">' +
+          '<span class="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-xs ' + (d.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500') + '">' + (d.ok ? '✓' : '–') + '</span>' +
+          '<span class="' + (d.ok ? 'text-stone-700' : 'text-stone-500') + '">' + escapeHtml(d.label) + '</span>' +
+        '</li>';
+      }).join('');
     }
 
-    document.getElementById('titreSeo').addEventListener('input', () => {
+    // Image de couverture
+    imageCoverInput.addEventListener('change', function() {
+      var file = this.files && this.files[0];
+      if (!file || !file.type.match(/^image\//)) {
+        coverImageDataUrl = null;
+        imagePreview.classList.add('hidden');
+        btnRemoveImage.classList.add('hidden');
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function() {
+        coverImageDataUrl = reader.result;
+        imagePreviewImg.src = coverImageDataUrl;
+        imagePreview.classList.remove('hidden');
+        btnRemoveImage.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    btnRemoveImage.addEventListener('click', function() {
+      coverImageDataUrl = null;
+      imageCoverInput.value = '';
+      imagePreview.classList.add('hidden');
+      btnRemoveImage.classList.add('hidden');
+    });
+
+    document.getElementById('titreSeo').addEventListener('input', function() {
       document.getElementById('titreSeo-count').textContent = document.getElementById('titreSeo').value.length;
       updateScore();
     });
-    document.getElementById('metaDescription').addEventListener('input', () => {
+    document.getElementById('metaDescription').addEventListener('input', function() {
       document.getElementById('meta-count').textContent = document.getElementById('metaDescription').value.length;
       updateScore();
     });
-    fields.forEach(name => {
-      const el = document.getElementById(name) || document.querySelector(`[name="${name}"]`);
+    fieldsForScore.forEach(function(name) {
+      var el = document.getElementById(name);
       if (el) el.addEventListener('input', updateScore);
     });
-    document.getElementById('slug').addEventListener('blur', () => {
-      const titre = document.getElementById('titre').value;
-      const slug = document.getElementById('slug').value;
+    document.getElementById('slug').addEventListener('blur', function() {
+      var titre = document.getElementById('titre').value;
+      var slug = document.getElementById('slug').value;
       if (!slug && titre) document.getElementById('slug').value = App.slugify(titre);
       updateScore();
     });
 
-    form.addEventListener('submit', (e) => {
+    /** Identifiants admin (MVP – vérification côté client) */
+    var ADMIN_USER = 'admin';
+    var ADMIN_PASS = 'admin123';
+
+    function askRedirectToAdmin() {
+      Swal.fire({
+        title: 'Êtes-vous l\'administrateur ?',
+        text: 'Souhaitez-vous accéder à la page d\'administration pour valider cet article ?',
+        icon: 'question',
+        showDenyButton: true,
+        confirmButtonText: 'Oui',
+        denyButtonText: 'Non',
+        confirmButtonColor: '#1d4ed8',
+      }).then(function(result) {
+        if (result.isConfirmed) {
+          showAdminLogin();
+        }
+      });
+    }
+
+    function showAdminLogin() {
+      Swal.fire({
+        title: 'Connexion administrateur',
+        html:
+          '<input id="swal-username" class="swal2-input" placeholder="Identifiant">' +
+          '<input id="swal-password" type="password" class="swal2-input" placeholder="Mot de passe">',
+        confirmButtonText: 'Valider',
+        confirmButtonColor: '#1d4ed8',
+        showCancelButton: true,
+        cancelButtonText: 'Annuler',
+        preConfirm: function() {
+          var u = document.getElementById('swal-username').value;
+          var p = document.getElementById('swal-password').value;
+          if (u === ADMIN_USER && p === ADMIN_PASS) {
+            return true;
+          }
+          Swal.showValidationMessage('Identifiants incorrects.');
+          return false;
+        },
+      }).then(function(result) {
+        if (result.isConfirmed) {
+          window.location.href = 'admin.html';
+        }
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const data = getFormData();
-      const result = SCORING.calculate(data);
+      var data = getFormData();
+      var result = SCORING.calculate(data);
       if (result.score < SEUIL) {
         submitMessage.classList.remove('hidden');
         return;
       }
-      const article = CMS.addArticle({
+      var article = CMS.addArticle({
         titre: data.titre,
         titreSeo: data.titreSeo,
         metaDescription: data.metaDescription,
@@ -196,10 +341,25 @@
         contenu: data.contenu,
         score: result.score,
         criteres: result.criteres,
+        imageData: data.imageData || null,
       });
       CMS.submitArticle(article.id);
-      alert('Article soumis à validation. L\'administrateur pourra le certifier ou le refuser.');
+
+      Swal.fire({
+        title: 'Article envoyé',
+        html: 'L\'article a bien été envoyé à l\'administrateur.<br>Il pourra le certifier ou le refuser.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#1d4ed8',
+      }).then(function() {
+        askRedirectToAdmin();
+      });
+
       form.reset();
+      coverImageDataUrl = null;
+      imagePreview.classList.add('hidden');
+      btnRemoveImage.classList.add('hidden');
+      imageCoverInput.value = '';
       document.getElementById('titreSeo-count').textContent = '0';
       document.getElementById('meta-count').textContent = '0';
       updateScore();
