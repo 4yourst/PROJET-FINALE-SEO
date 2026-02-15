@@ -4,136 +4,163 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Actualités – Information et décryptage</title>
+  <title>Les Échos MVP - Actualités économiques et financières</title>
+
+  <link rel="stylesheet" href="visitor.css">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
-  <style>
-    :root {
-      --color-ink: #1a1a1a;
-      --color-ink-soft: #4a4a4a;
-      --color-muted: #6b7280;
-      --color-border: #e5e7eb;
-      --color-paper: #fafafa;
-      --color-accent: #1e3a5f;
-    }
-
-    body {
-      font-family: 'Source Sans 3', sans-serif;
-      color: var(--color-ink);
-      background: var(--color-paper);
-    }
-
-    .font-headline {
-      font-family: 'Libre Baskerville', serif;
-    }
-
-    .font-editorial {
-      font-family: 'Source Serif 4', serif;
-    }
-
-    .article-content {
-      font-family: 'Source Serif 4', serif;
-    }
-
-    .article-content h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-      color: var(--color-ink);
-    }
-
-    .article-content p {
-      margin-bottom: 1.25rem;
-      line-height: 1.7;
-      color: var(--color-ink-soft);
-    }
-
-    .article-content a {
-      color: var(--color-accent);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .article-content a:hover {
-      text-decoration-thickness: 2px;
-    }
-
-    .img-cover {
-      object-fit: cover;
-    }
-
-    .line-clamp-1 {
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .line-clamp-2 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-  </style>
 </head>
 
-<body class="min-h-screen antialiased">
-  <!-- En-tête professionnel -->
-  <header class="bg-white border-b border-stone-200">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <a href="#"
-          class="font-headline text-xl sm:text-2xl font-bold text-[var(--color-ink)] tracking-tight">Actualités</a>
-        <p class="text-xs text-[var(--color-muted)] font-medium uppercase tracking-wider"><time id="header-date"></time>
-        </p>
+<body class="bg-white min-h-screen text-gray-900 font-sans">
+
+  <!-- Header -->
+  <header class="border-b border-gray-200 sticky top-0 bg-white z-50">
+    <!-- Top Bar (Date/Edition) - Hidden on mobile -->
+    <div class="bg-gray-50 border-b border-gray-100 hidden sm:block">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 flex justify-between items-center text-xs text-gray-500 font-medium uppercase tracking-wide">
+        <time id="header-date"></time>
+        <div class="space-x-4">
+          <a href="#" class="hover:text-red-700">S'abonner</a>
+          <a href="#" class="hover:text-red-700">Connexion</a>
+        </div>
       </div>
     </div>
+
+    <!-- Main Header -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+
+        <!-- Mobile Menu Button -->
+        <button class="sm:hidden p-2 text-gray-500">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+
+        <!-- Logo -->
+        <a href="visitor.html" class="flex-shrink-0 flex items-center justify-center gap-3 group mx-auto sm:mx-0">
+          <div
+            class="bg-red-700 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-white font-bold text-xl sm:text-2xl font-serif rounded-sm group-hover:bg-red-800 transition-colors">
+            E</div>
+          <span
+            class="font-headline text-2xl sm:text-4xl font-bold tracking-tighter text-gray-900 group-hover:text-red-700 transition-colors">Les
+            Échos</span>
+        </a>
+
+        <!-- Search Icon (Desktop) -->
+        <div class="hidden sm:flex items-center">
+          <div class="relative">
+            <input type="text" placeholder="Rechercher..."
+              class="pl-3 pr-8 py-1.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-red-700 w-48 transition-all focus:w-64">
+            <svg class="w-4 h-4 absolute right-3 top-2.5 text-gray-400" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Search Icon (Mobile) -->
+        <button class="sm:hidden p-2 text-gray-500">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- NavBar -->
+    <nav class="border-t border-gray-100 hidden sm:block">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-center space-x-8 py-3">
+          <a href="visitor.html"
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-red-700 border-b-2 border-red-700 pb-0.5">Accueil</a>
+          <a href="#"
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Politique</a>
+          <a href="#"
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Économie</a>
+          <a href="#"
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Entreprises</a>
+          <a href="#"
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Tech-Médias</a>
+          <a href="#"
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Société</a>
+          <a href="#"
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Monde</a>
+        </div>
+      </div>
+    </nav>
   </header>
 
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-    <!-- Liste : hero + secondaires + flux -->
-    <section id="article-list" class="space-y-10 sm:space-y-12">
-      <!-- Rempli par JS -->
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+    <!-- Section: À la une (Hero) -->
+    <section id="hero-section" class="mb-12 border-b border-gray-200 pb-12">
+      <!-- Injecté par JS -->
+      <div class="animate-pulse flex space-x-4">
+        <div class="flex-1 space-y-4 py-1">
+          <div class="h-40 bg-gray-200 rounded"></div>
+          <div class="space-y-2">
+            <div class="h-4 bg-gray-200 rounded"></div>
+            <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- Détail d'un article (masqué par défaut) -->
-    <section id="article-detail" class="hidden">
-      <nav class="mb-6">
-        <a href="#" id="back-to-list"
-          class="text-sm font-medium text-[var(--color-accent)] hover:underline inline-flex items-center gap-1">
-          ← Retour à l'accueil
-        </a>
-      </nav>
-      <article id="article-detail-content" class="bg-white">
-        <!-- Rempli par JS -->
-      </article>
-    </section>
+    <!-- Section: Grille Secondaire + Liste Latérale -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+
+      <!-- Colonne Principale (Grille) -->
+      <div class="lg:col-span-8">
+        <h3
+          class="font-sans font-bold text-red-700 uppercase tracking-widest text-xs mb-6 border-b border-red-700 inline-block pb-1">
+          En continu</h3>
+        <div id="grid-section" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Injecté par JS -->
+        </div>
+      </div>
+
+      <!-- Colonne Latérale (Derniers / Filler) -->
+      <aside class="lg:col-span-4 border-l border-gray-100 pl-0 lg:pl-8 mt-10 lg:mt-0">
+        <h3
+          class="font-sans font-bold text-gray-900 uppercase tracking-widest text-xs mb-6 border-b border-gray-200 pb-2">
+          Les plus lus</h3>
+        <ul id="list-section" class="space-y-6 divide-y divide-gray-100">
+          <!-- Injecté par JS -->
+        </ul>
+
+        <!-- Publicité / Promo Box -->
+        <div class="mt-10 bg-gray-50 p-6 border border-gray-100 text-center">
+          <p class="font-headline text-lg font-bold mb-2">Abonnez-vous</p>
+          <p class="text-sm text-gray-500 mb-4">Accédez à tous nos articles en illimité.</p>
+          <button
+            class="bg-red-700 text-white px-6 py-2 text-sm font-bold uppercase tracking-wide hover:bg-black transition-colors">Je
+            m'abonne</button>
+        </div>
+      </aside>
+
+    </div>
+
   </main>
 
-  <footer class="border-t border-stone-200 mt-16 bg-white">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-      <p class="text-xs text-[var(--color-muted)] text-center">© Actualités. Tous les articles affichés sont certifiés
-        et publiés.</p>
+  <footer class="bg-gray-900 text-white border-t-4 border-red-700 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center text-sm text-gray-400">
+      <p class="mb-4">&copy; 2026 Les Échos MVP. Site de démonstration pour projet pédagogique.</p>
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script src="data.js"></script>
   <script src="app.js"></script>
   <script>
     App.setRole('visitor');
 
-    const listEl = document.getElementById('article-list');
-    const detailSection = document.getElementById('article-detail');
-    const detailContent = document.getElementById('article-detail-content');
-    const backLink = document.getElementById('back-to-list');
-
-    // Placeholders Unsplash – thème actualité/pro, remplaçables facilement
+    // Placeholders
     const PLACEHOLDER_IMAGES = [
       'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80',
       'https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=1200&q=80',
@@ -143,143 +170,105 @@
       'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=80',
     ];
 
-    function getPlaceholder(index) {
-      return PLACEHOLDER_IMAGES[index % PLACEHOLDER_IMAGES.length];
-    }
-    /** Image principale d'un article : image uploadée par le rédacteur ou placeholder */
-    function getArticleImage(art, placeholderIndex) {
-      return (art && art.imageData) ? art.imageData : getPlaceholder(placeholderIndex);
+    function getArticleImage(art, index) {
+      if (art && art.imageData) return art.imageData;
+      return PLACEHOLDER_IMAGES[(art.id || index) % PLACEHOLDER_IMAGES.length];
     }
 
-    function setHeaderDate() {
-      var el = document.getElementById('header-date');
-      if (el) el.textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }); // "12 oct."
     }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      var div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
+    function renderHome() {
+      const articles = CMS.getCertifiedArticles(); // Uniquement Certified
 
-    function renderList() {
-      var articles = App.getArticlesForVisitor();
-      setHeaderDate();
+      // Date Header
+      document.getElementById('header-date').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
       if (articles.length === 0) {
-        listEl.innerHTML = '<p class="text-[var(--color-muted)] text-center py-16 font-editorial">Aucun article publié pour le moment.</p>';
+        document.getElementById('hero-section').innerHTML = '<p class="text-center py-10 text-gray-500">Aucune actualité disponible pour le moment.</p>';
         return;
       }
 
-      var hero = articles[0];
-      var secondary = articles.slice(1, 4);
-      var rest = articles.slice(4);
+      // Trier par date (déjà le cas souvent, mais assurons-nous) - optionnel ou par défaut
+      // On prend le premier pour la UNE
+      const heroArticle = articles[0];
+      const gridArticles = articles.slice(1, 5); // 4 articles suivants
+      const listArticles = articles.slice(5, 10); // 5 suivants pour la liste
 
-      var html = '';
+      // 1. Rendu Hero
+      // Layout: Image à gauche (ou dessus mobile), Titre/Chapeau à droite
+      const heroHTML = `
+         <article class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start group cursor-pointer" onclick="location.href='article.html?id=${heroArticle.id}'">
+            <div class="lg:col-span-8 order-2 lg:order-1 relative overflow-hidden aspect-[16/9] bg-gray-100">
+               <img src="${getArticleImage(heroArticle, 0)}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${heroArticle.titre}">
+            </div>
+            <div class="lg:col-span-4 order-1 lg:order-2 flex flex-col justify-center h-full py-2">
+               <span class="text-red-700 font-bold uppercase text-xs tracking-wider mb-2">À la une</span>
+               <h1 class="font-headline text-3xl sm:text-4xl lg:text-4xl font-bold leading-tight mb-4 group-hover:text-red-700 transition-colors">
+                  ${heroArticle.titre}
+               </h1>
+               <p class="font-serif-text text-gray-600 text-lg leading-relaxed mb-4 line-clamp-4">
+                  ${App.getExcerpt ? App.getExcerpt(heroArticle.contenu, 200) : 'Lire l\'article...'}
+               </p>
+               <div class="text-xs text-gray-400 font-medium uppercase tracking-wide mt-auto">
+                  ${formatDate(heroArticle.datePublication)} <span class="mx-1">•</span> Lecture 3 min
+               </div>
+            </div>
+         </article>
+       `;
+      document.getElementById('hero-section').innerHTML = heroHTML;
 
-      // —— Hero (article principal) ——
-      html += '<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">';
-      html += '  <div class="lg:col-span-7">';
-      html += '    <a href="#" class="block group article-link" data-id="' + hero.id + '">';
-      html += '      <div class="aspect-[16/10] bg-stone-200 overflow-hidden">';
-      html += '        <img src="' + getArticleImage(hero, 0) + '" alt="" class="w-full h-full img-cover group-hover:scale-[1.02] transition-transform duration-300" loading="eager">';
-      html += '      </div>';
-      html += '    </a>';
-      html += '  </div>';
-      html += '  <div class="lg:col-span-5 flex flex-col justify-center">';
-      html += '    <a href="#" class="article-link group block" data-id="' + hero.id + '">';
-      html += '      <span class="text-xs font-medium text-[var(--color-muted)] uppercase tracking-wider">' + App.formatDate(hero.datePublication) + '</span>';
-      html += '      <span class="ml-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Certifié SEO</span>';
-      html += '      <h2 class="font-headline text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--color-ink)] mt-2 leading-tight group-hover:text-[var(--color-accent)] transition-colors">' + escapeHtml(hero.titre) + '</h2>';
-      html += '      <p class="font-editorial text-[var(--color-ink-soft)] mt-3 text-base leading-relaxed">' + escapeHtml(App.getExcerpt(hero.contenu, 220)) + '</p>';
-      html += '      <span class="inline-block mt-4 text-sm font-medium text-[var(--color-accent)] group-hover:underline">Lire la suite</span>';
-      html += '    </a>';
-      html += '  </div>';
-      html += '</div>';
-
-      // —— Secondaires (2 ou 3) ——
-      if (secondary.length > 0) {
-        html += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-' + Math.min(secondary.length, 3) + ' gap-6 lg:gap-8 pt-6 border-t border-stone-200">';
-        secondary.forEach(function (art, i) {
-          html += '<article class="bg-white overflow-hidden">';
-          html += '  <a href="#" class="block group article-link" data-id="' + art.id + '">';
-          html += '    <div class="aspect-[16/10] bg-stone-200 overflow-hidden">';
-          html += '      <img src="' + getArticleImage(art, i + 1) + '" alt="" class="w-full h-full img-cover group-hover:scale-[1.02] transition-transform duration-300" loading="lazy">';
-          html += '    </div>';
-          html += '    <div class="py-3">';
-          html += '      <span class="text-xs text-[var(--color-muted)]">' + App.formatDate(art.datePublication) + '</span>';
-          html += '      <span class="ml-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Certifié SEO</span>';
-          html += '      <h3 class="font-headline text-lg sm:text-xl font-bold text-[var(--color-ink)] mt-1.5 leading-snug group-hover:text-[var(--color-accent)] transition-colors">' + escapeHtml(art.titre) + '</h3>';
-          html += '      <p class="text-sm text-[var(--color-ink-soft)] mt-1 line-clamp-2">' + escapeHtml(App.getExcerpt(art.contenu, 120)) + '</p>';
-          html += '    </div>';
-          html += '  </a>';
-          html += '</article>';
-        });
-        html += '</div>';
-      }
-
-      // —— Flux (reste des articles) ——
-      if (rest.length > 0) {
-        html += '<div class="pt-6 border-t border-stone-200">';
-        html += '  <h2 class="sr-only">Autres articles</h2>';
-        html += '  <ul class="space-y-0 divide-y divide-stone-200">';
-        rest.forEach(function (art, i) {
-          html += '<li>';
-          html += '  <a href="#" class="flex flex-col sm:flex-row gap-4 py-5 sm:py-6 group article-link" data-id="' + art.id + '">';
-          html += '    <div class="sm:w-40 flex-shrink-0 aspect-video sm:aspect-[16/10] bg-stone-200 overflow-hidden rounded">';
-          html += '      <img src="' + getArticleImage(art, 4 + i) + '" alt="" class="w-full h-full img-cover group-hover:scale-[1.02] transition-transform duration-300" loading="lazy">';
-          html += '    </div>';
-          html += '    <div class="min-w-0 flex-1">';
-          html += '      <span class="text-xs text-[var(--color-muted)]">' + App.formatDate(art.datePublication) + '</span>';
-          html += '      <span class="ml-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Certifié SEO</span>';
-          html += '      <h3 class="font-headline text-base sm:text-lg font-bold text-[var(--color-ink)] mt-1 group-hover:text-[var(--color-accent)] transition-colors">' + escapeHtml(art.titre) + '</h3>';
-          html += '      <p class="text-sm text-[var(--color-ink-soft)] mt-0.5 line-clamp-1">' + escapeHtml(App.getExcerpt(art.contenu, 100)) + '</p>';
-          html += '    </div>';
-          html += '  </a>';
-          html += '</li>';
-        });
-        html += '  </ul>';
-        html += '</div>';
-      }
-
-      listEl.innerHTML = html;
-
-      listEl.querySelectorAll('.article-link').forEach(function (link) {
-        link.addEventListener('click', function (e) {
-          e.preventDefault();
-          showArticle(link.dataset.id);
-        });
+      // 2. Rendu Grille
+      let gridHTML = '';
+      gridArticles.forEach(art => {
+        gridHTML += `
+            <article class="flex flex-col group cursor-pointer border-b border-gray-100 pb-6 md:border-none" onclick="location.href='article.html?id=${art.id}'">
+               <div class="aspect-[3/2] bg-gray-100 mb-4 overflow-hidden relative">
+                  <img src="${getArticleImage(art, art.id)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+               </div>
+               <h3 class="font-headline text-xl font-bold leading-tight mb-2 group-hover:text-red-700 transition-colors">
+                  ${art.titre}
+               </h3>
+               <p class="text-gray-500 text-sm line-clamp-2 leading-relaxed mb-3">
+                  ${App.getExcerpt ? App.getExcerpt(art.contenu, 100) : ''}
+               </p>
+               <time class="text-xs text-gray-400 uppercase tracking-wide">${formatDate(art.datePublication)}</time>
+            </article>
+          `;
       });
-    }
+      document.getElementById('grid-section').innerHTML = gridHTML;
 
-    function showArticle(id) {
-      var art = CMS.getArticleById(id);
-      if (!art || art.statut !== 'certified') {
-        renderList();
-        return;
+      // 3. Rendu Liste (Sidebar)
+      let listHTML = '';
+      if (listArticles.length > 0) {
+        listArticles.forEach((art, index) => {
+          listHTML += `
+               <li class="pt-4 first:pt-0">
+                  <article class="group cursor-pointer flex gap-4" onclick="location.href='article.html?id=${art.id}'">
+                     <span class="text-3xl font-bold text-gray-200 font-headline group-hover:text-red-700 transition-colors">${index + 1}</span>
+                     <div>
+                        <h4 class="font-bold text-base leading-snug group-hover:text-red-700 transition-colors mb-1">
+                           ${art.titre}
+                        </h4>
+                        <time class="text-xs text-gray-400 uppercase tracking-wide">${formatDate(art.datePublication)}</time>
+                     </div>
+                  </article>
+               </li>
+             `;
+        });
+      } else {
+        // Fallback si pas assez d'articles
+        listHTML = '<li class="text-sm text-gray-400 italic">Pas d\'autres articles récents.</li>';
       }
-      listEl.classList.add('hidden');
-      detailSection.classList.remove('hidden');
-      detailContent.innerHTML =
-        '<div class="aspect-[21/9] sm:aspect-[3/1] bg-stone-200 overflow-hidden rounded-t-lg">' +
-        '<img src="' + getArticleImage(art, 0) + '" alt="" class="w-full h-full img-cover" loading="eager">' +
-        '</div>' +
-        '<div class="max-w-3xl mx-auto px-4 py-8 sm:py-10">' +
-        '<p class="text-sm text-[var(--color-muted)]">' + App.formatDate(art.datePublication) + ' <span class="ml-2 font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">Certifié SEO</span></p>' +
-        '<h1 class="font-headline text-3xl sm:text-4xl font-bold text-[var(--color-ink)] mt-2 leading-tight">' + escapeHtml(art.titre) + '</h1>' +
-        '<div class="article-content mt-8 text-lg">' + art.contenu + '</div>' +
-        '</div>';
+      document.getElementById('list-section').innerHTML = listHTML;
     }
 
-    backLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      detailSection.classList.add('hidden');
-      listEl.classList.remove('hidden');
-      renderList();
-    });
+    // Run
+    document.addEventListener('DOMContentLoaded', renderHome);
 
-    renderList();
   </script>
 </body>
 

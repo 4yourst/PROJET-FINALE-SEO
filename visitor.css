@@ -1,0 +1,114 @@
+/* visitor.css - Style "Les Échos" pour le module visiteur */
+
+/* Import Google Fonts handled in HTML for performance, or here if preferred. 
+   Keeping in HTML as per existing pattern, but defining usage here. */
+
+:root {
+  /* Palette Les Échos-like */
+  --color-brand: #C8102E; /* Rouge "Les Échos" approximatif pour accents */
+  --color-ink: #1F1F1F; /* Noir profond mais pas pur */
+  --color-ink-soft: #444444; /* Gris foncé pour chapeaux */
+  --color-meta: #767676; /* Gris pour dates/auteurs */
+  --color-bg: #FFFFFF;
+  --color-bg-alt: #F8F8F8;
+  --color-border: #E5E5E5;
+
+  /* Spacing */
+  --layout-max-width: 1200px;
+  --header-height: 60px;
+}
+
+body {
+  font-family: 'Source Sans 3', sans-serif; /* Corps par défaut */
+  color: var(--color-ink);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typographie "Presse" */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Libre Baskerville', serif; /* Titres forts */
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.font-serif-text {
+  font-family: 'Source Serif 4', serif; /* Pour le corps des articles */
+}
+
+.font-sans-ui {
+  font-family: 'Source Sans 3', sans-serif; /* Pour l'interface */
+}
+
+/* Header */
+.site-header {
+  border-bottom: 1px solid var(--color-border);
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink);
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--color-brand);
+}
+
+/* Utility pour le texte de l'article */
+.article-body {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--color-ink-soft);
+}
+
+.article-body p {
+  margin-bottom: 1.5rem;
+}
+
+.article-body h2 {
+  font-size: 1.75rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.article-body h3 {
+  font-size: 1.4rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.article-body a {
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.label-certifie {
+  background-color: #FDF2F2; /* Rouge très pâle */
+  color: #9B1C1C;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Layout Cards */
+.card-hover-effect:hover .card-title {
+  color: var(--color-brand);
+}
+
+.card-hover-effect:hover img {
+  transform: scale(1.03);
+}
