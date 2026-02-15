@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rédacteur – Création d'article</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Source Sans 3', sans-serif; }
+    .img-cover { object-fit: cover; }
+  </style>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen">
+  <header class="bg-white border-b border-stone-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl font-bold text-stone-900">Rédacteur</h1>
+        <p class="text-stone-500 text-sm mt-0.5">Création d'article – Score SEO en temps réel</p>
+      </div>
+      <button type="button" id="btn-logout" class="px-4 py-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 font-medium rounded-lg transition-colors">Déconnexion</button>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Mes articles / Suivi de publication -->
+    <section class="mb-8">
+      <h2 class="text-lg font-semibold text-stone-900 mb-4">📌 Mes articles / Suivi de publication</h2>
+      <div id="my-articles-list" class="space-y-4">
+        <!-- Rempli par JS -->
+      </div>
+      <p id="my-articles-empty" class="text-stone-500 text-sm py-4 hidden">Aucun article pour le moment. Créez un article ci-dessous.</p>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Formulaire -->
+      <div class="lg:col-span-2 space-y-6">
+        <form id="article-form" class="space-y-6">
+          <!-- Image de couverture -->
+          <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-stone-900 mb-4">Image de couverture</h2>
+            <p class="text-sm text-stone-500 mb-3">Image principale de l'article (bannière). Optionnel.</p>
+            <div class="flex flex-col sm:flex-row gap-4 items-start">
+              <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 rounded-lg text-sm font-medium text-stone-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Choisir une image
+                <input type="file" id="imageCover" name="imageCover" accept="image/*" class="hidden">
+              </label>
+              <button type="button" id="btn-remove-image" class="hidden text-sm font-medium text-red-600 hover:text-red-700">Supprimer l'image</button>
+            </div>
+            <div id="image-preview" class="mt-4 hidden">
+              <p class="text-xs text-stone-500 mb-2">Aperçu :</p>
+              <div class="aspect-video max-w-md bg-stone-200 rounded-lg overflow-hidden">
+                <img id="image-preview-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Aperçu" class="w-full h-full img-cover">
+              </div>
+            </div>
+          </div>
+
+          <!-- Contenu structuré (sans HTML) -->
+          <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-stone-900 mb-4">Contenu de l'article</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Titre de l'article</label>
+                <input type="text" id="titre" name="titre" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Titre principal affiché">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Sous-titre <span class="text-stone-400 font-normal">(optionnel)</span></label>
+                <input type="text" id="sousTitre" name="sousTitre" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Courte accroche ou sous-titre">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Corps de l'article</label>
+                <textarea id="corps" name="corps" rows="10" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Écrivez vos paragraphes. Séparez chaque paragraphe par une ligne vide.&#10;&#10;Pour un lien, utilisez : [texte du lien](url)&#10;Exemple : [en savoir plus](/visitor.html)"></textarea>
+                <p class="text-xs text-stone-500 mt-1">Un paragraphe = un bloc de texte. Ligne vide = nouveau paragraphe. Liens : [texte](url)</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Champs SEO -->
+          <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-stone-900 mb-4">Champs SEO</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Titre SEO (≤ 60 caractères, avec mot-clé)</label>
+                <input type="text" id="titreSeo" name="titreSeo" maxlength="60" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Titre pour les moteurs de recherche">
+                <p class="text-xs text-stone-500 mt-1"><span id="titreSeo-count">0</span> / 60</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Méta-description (120–160 caractères)</label>
+                <textarea id="metaDescription" name="metaDescription" rows="2" maxlength="160" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Résumé court pour les résultats de recherche"></textarea>
+                <p class="text-xs text-stone-500 mt-1"><span id="meta-count">0</span> / 160 (idéal : 120–160)</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">Mot-clé principal</label>
+                <input type="text" id="motClePrincipal" name="motClePrincipal" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="ex: transition énergétique">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-stone-700 mb-1">URL (slug SEO-friendly)</label>
+                <input type="text" id="slug" name="slug" class="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono text-sm" placeholder="mon-article-seo">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-4 items-center">
+            <button type="submit" id="btn-submit" disabled class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              Soumettre à l'admin
+            </button>
+            <a href="visitor.html" class="px-4 py-2 text-stone-600 hover:text-stone-900 font-medium">Voir le site public</a>
+          </div>
+          <p id="submit-message" class="text-sm text-amber-600 hidden">Le score SEO doit être ≥ 66 % pour pouvoir soumettre.</p>
+        </form>
+      </div>
+
+      <!-- Sidebar : score + checklist -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg border border-stone-200 shadow-sm p-6 sticky top-4">
+          <h2 class="text-lg font-semibold text-stone-900 mb-4">Score SEO</h2>
+          <div class="flex items-center justify-center mb-6">
+            <div id="score-circle" class="w-28 h-28 rounded-full flex items-center justify-center text-2xl font-bold border-4 border-stone-200">
+              <span id="score-value">0</span> %
+            </div>
+          </div>
+          <p id="score-status" class="text-center text-sm font-medium mb-4">Remplissez les champs pour calculer le score.</p>
+          <h3 class="text-sm font-semibold text-stone-700 mb-2">Checklist des critères</h3>
+          <ul id="criteria-list" class="space-y-1.5 text-sm">
+            <!-- Rempli par JS -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+  <script src="data.js"></script>
+  <script src="scoring.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if (!Auth.requireBlogger()) throw new Error('redirect');
+    document.getElementById('btn-logout').addEventListener('click', function() { Auth.logout(); });
+
+    App.setRole('editor');
+
+    var auth = Auth.getAuth();
+    var currentEditingId = null;
+
+    function getMyArticles() {
+      CMS.init();
+      return CMS.articles
+        .filter(function(a) { return a.authorUsername === auth.username; })
+        .sort(function(a, b) {
+          var da = a.datePublication || a.dateCreation || '';
+          var db = b.datePublication || b.dateCreation || '';
+          return db.localeCompare(da);
+        });
+    }
+
+    function getStatusConfig(statut) {
+      var map = {
+        draft: { label: 'Brouillon', message: 'Brouillon – non envoyé à l\'admin', class: 'bg-stone-200 text-stone-700' },
+        submitted: { label: 'Soumis', message: 'Envoyé à l\'admin – en attente de validation', class: 'bg-amber-100 text-amber-800' },
+        rejected: { label: 'Refusé', message: 'Refusé – corrections nécessaires', class: 'bg-red-100 text-red-800' },
+        certified: { label: 'Certifié', message: 'Certifié & publié – visible sur la page visiteurs', class: 'bg-emerald-100 text-emerald-800' },
+      };
+      return map[statut] || map.draft;
+    }
+
+    function renderMyArticles() {
+      var listEl = document.getElementById('my-articles-list');
+      var emptyEl = document.getElementById('my-articles-empty');
+      var myArticles = getMyArticles();
+
+      if (myArticles.length === 0) {
+        listEl.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+      listEl.innerHTML = myArticles.map(function(art) {
+        var stat = art.statut || 'draft';
+        var cfg = getStatusConfig(stat);
+        var dateLabel = stat === 'certified' && art.datePublication ? 'Publié le ' + App.formatDate(art.datePublication) : 'Créé le ' + App.formatDate(art.dateCreation || '');
+        var btnResubmit = stat === 'rejected'
+          ? '<button type="button" class="btn-resubmit mt-2 px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors" data-id="' + art.id + '">Modifier et resoumettre</button>'
+          : '';
+        return '<article class="bg-white rounded-lg border border-stone-200 shadow-sm p-4" data-id="' + art.id + '">' +
+          '<div class="flex flex-wrap items-start justify-between gap-2">' +
+            '<div class="min-w-0 flex-1">' +
+              '<h3 class="font-semibold text-stone-900">' + escapeHtml(art.titre || 'Sans titre') + '</h3>' +
+              '<p class="text-xs text-stone-500 mt-0.5">' + dateLabel + '</p>' +
+              '<p class="text-sm text-stone-600 mt-1">' + escapeHtml(cfg.message) + '</p>' +
+              btnResubmit +
+            '</div>' +
+            '<span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium ' + cfg.class + '">' + escapeHtml(cfg.label) + '</span>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+
+      listEl.querySelectorAll('.btn-resubmit').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = btn.getAttribute('data-id');
+          var art = CMS.getArticleById(id);
+          if (art) loadArticleIntoForm(art);
+        });
+      });
+    }
+
+    function loadArticleIntoForm(art) {
+      document.getElementById('titre').value = art.titre || '';
+      document.getElementById('sousTitre').value = art.sousTitre || '';
+      document.getElementById('corps').value = art.corps || '';
+      document.getElementById('titreSeo').value = art.titreSeo || '';
+      document.getElementById('metaDescription').value = art.metaDescription || '';
+      document.getElementById('motClePrincipal').value = art.motClePrincipal || '';
+      document.getElementById('slug').value = art.slug || '';
+      document.getElementById('titreSeo-count').textContent = (art.titreSeo || '').length;
+      document.getElementById('meta-count').textContent = (art.metaDescription || '').length;
+
+      coverImageDataUrl = art.imageData || null;
+      if (coverImageDataUrl) {
+        imagePreviewImg.src = coverImageDataUrl;
+        imagePreview.classList.remove('hidden');
+        btnRemoveImage.classList.remove('hidden');
+      } else {
+        imagePreview.classList.add('hidden');
+        btnRemoveImage.classList.add('hidden');
+        imageCoverInput.value = '';
+      }
+
+      currentEditingId = art.id;
+      updateScore();
+      document.getElementById('article-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    const form = document.getElementById('article-form');
+    const btnSubmit = document.getElementById('btn-submit');
+    const submitMessage = document.getElementById('submit-message');
+    const scoreValue = document.getElementById('score-value');
+    const scoreCircle = document.getElementById('score-circle');
+    const scoreStatus = document.getElementById('score-status');
+    const criteriaList = document.getElementById('criteria-list');
+    const imageCoverInput = document.getElementById('imageCover');
+    const imagePreview = document.getElementById('image-preview');
+    const imagePreviewImg = document.getElementById('image-preview-img');
+    const btnRemoveImage = document.getElementById('btn-remove-image');
+
+    /** Image de couverture : stockée en base64 (data URL) pour association à l'article */
+    let coverImageDataUrl = null;
+
+    const SEUIL = App.getSeuilSoumission();
+
+    /** Échapper HTML pour affichage */
+    function escapeHtml(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /** Construire le HTML du contenu à partir des champs structurés (titre, sous-titre, corps). Liens : [texte](url) */
+    function buildContenuFromStructured(titre, sousTitre, corps) {
+      var html = '<h1>' + escapeHtml((titre || '').trim()) + '</h1>';
+      if ((sousTitre || '').trim()) {
+        html += '<p>' + escapeHtml((sousTitre || '').trim()) + '</p>';
+      }
+      var blocs = (corps || '').split(/\n\n+/).filter(function(s) { return s.trim(); });
+      blocs.forEach(function(bloc) {
+        var line = bloc.trim().replace(/\n/g, ' ');
+        line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+        html += '<p>' + line + '</p>';
+      });
+      return html;
+    }
+
+    const fieldsForScore = ['titre', 'sousTitre', 'corps', 'titreSeo', 'metaDescription', 'motClePrincipal', 'slug'];
+
+    function getFormData() {
+      var titre = (document.getElementById('titre') && document.getElementById('titre').value) || '';
+      var sousTitre = (document.getElementById('sousTitre') && document.getElementById('sousTitre').value) || '';
+      var corps = (document.getElementById('corps') && document.getElementById('corps').value) || '';
+      var contenu = buildContenuFromStructured(titre, sousTitre, corps);
+      var data = {
+        titre: titre,
+        sousTitre: sousTitre,
+        corps: corps,
+        contenu: contenu,
+        titreSeo: (document.getElementById('titreSeo') && document.getElementById('titreSeo').value) || '',
+        metaDescription: (document.getElementById('metaDescription') && document.getElementById('metaDescription').value) || '',
+        motClePrincipal: (document.getElementById('motClePrincipal') && document.getElementById('motClePrincipal').value) || '',
+        slug: (document.getElementById('slug') && document.getElementById('slug').value) || '',
+      };
+      if (!data.slug && data.titre) data.slug = App.slugify(data.titre);
+      if (coverImageDataUrl) data.imageData = coverImageDataUrl;
+      return data;
+    }
+
+    function updateScore() {
+      var data = getFormData();
+      var result = SCORING.calculate(data);
+      var score = result.score;
+      var details = result.details;
+
+      scoreValue.textContent = score;
+      scoreCircle.classList.remove('border-red-400', 'border-amber-400', 'border-emerald-500');
+      if (score < SEUIL) {
+        scoreCircle.classList.add('border-red-400');
+        scoreValue.classList.remove('text-emerald-600', 'text-amber-600');
+        scoreValue.classList.add('text-red-600');
+      } else if (score < 80) {
+        scoreCircle.classList.add('border-amber-400');
+        scoreValue.classList.remove('text-red-600', 'text-emerald-600');
+        scoreValue.classList.add('text-amber-600');
+      } else {
+        scoreCircle.classList.add('border-emerald-500');
+        scoreValue.classList.remove('text-red-600', 'text-amber-600');
+        scoreValue.classList.add('text-emerald-600');
+      }
+
+      if (score < SEUIL) {
+        scoreStatus.textContent = 'Score insuffisant (minimum ' + SEUIL + ' % pour soumettre).';
+        scoreStatus.classList.remove('text-emerald-600');
+        scoreStatus.classList.add('text-amber-600');
+        btnSubmit.disabled = true;
+        submitMessage.classList.remove('hidden');
+      } else {
+        scoreStatus.textContent = 'Vous pouvez soumettre cet article.';
+        scoreStatus.classList.remove('text-amber-600');
+        scoreStatus.classList.add('text-emerald-600');
+        btnSubmit.disabled = false;
+        submitMessage.classList.add('hidden');
+      }
+
+      criteriaList.innerHTML = details.map(function(d) {
+        return '<li class="flex items-center gap-2">' +
+          '<span class="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-xs ' + (d.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500') + '">' + (d.ok ? '✓' : '–') + '</span>' +
+          '<span class="' + (d.ok ? 'text-stone-700' : 'text-stone-500') + '">' + escapeHtml(d.label) + '</span>' +
+        '</li>';
+      }).join('');
+    }
+
+    /**
+     * Compresse l'image pour réduire la taille en base64 et garantir la persistance localStorage.
+     * Max 1200px de large, JPEG 0.85. Formats courants gérés (JPEG, PNG, WebP).
+     */
+    function compressImageAsDataUrl(file, maxWidth, quality, callback) {
+      var img = document.createElement('img');
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth;
+        var h = img.naturalHeight;
+        if (w > maxWidth) {
+          h = Math.round((h * maxWidth) / w);
+          w = maxWidth;
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', quality);
+        callback(dataUrl);
+      };
+      img.onerror = function() {
+        URL.revokeObjectURL(url);
+        var reader = new FileReader();
+        reader.onload = function() { callback(reader.result); };
+        reader.readAsDataURL(file);
+      };
+      img.src = url;
+    }
+
+    // Image de couverture
+    imageCoverInput.addEventListener('change', function() {
+      var file = this.files && this.files[0];
+      if (!file || !file.type.match(/^image\//)) {
+        coverImageDataUrl = null;
+        imagePreview.classList.add('hidden');
+        btnRemoveImage.classList.add('hidden');
+        return;
+      }
+      compressImageAsDataUrl(file, 1200, 0.85, function(dataUrl) {
+        coverImageDataUrl = dataUrl;
+        imagePreviewImg.src = coverImageDataUrl;
+        imagePreview.classList.remove('hidden');
+        btnRemoveImage.classList.remove('hidden');
+      });
+    });
+
+    btnRemoveImage.addEventListener('click', function() {
+      coverImageDataUrl = null;
+      imageCoverInput.value = '';
+      imagePreview.classList.add('hidden');
+      btnRemoveImage.classList.add('hidden');
+    });
+
+    document.getElementById('titreSeo').addEventListener('input', function() {
+      document.getElementById('titreSeo-count').textContent = document.getElementById('titreSeo').value.length;
+      updateScore();
+    });
+    document.getElementById('metaDescription').addEventListener('input', function() {
+      document.getElementById('meta-count').textContent = document.getElementById('metaDescription').value.length;
+      updateScore();
+    });
+    fieldsForScore.forEach(function(name) {
+      var el = document.getElementById(name);
+      if (el) el.addEventListener('input', updateScore);
+    });
+    document.getElementById('slug').addEventListener('blur', function() {
+      var titre = document.getElementById('titre').value;
+      var slug = document.getElementById('slug').value;
+      if (!slug && titre) document.getElementById('slug').value = App.slugify(titre);
+      updateScore();
+    });
+
+    function askRedirectToAdmin() {
+      Swal.fire({
+        title: 'Êtes-vous l\'administrateur ?',
+        text: 'Souhaitez-vous accéder à la page d\'administration pour valider cet article ?',
+        icon: 'question',
+        showDenyButton: true,
+        confirmButtonText: 'Oui',
+        denyButtonText: 'Non',
+        confirmButtonColor: '#1d4ed8',
+      }).then(function(result) {
+        if (result.isConfirmed) {
+          window.location.href = 'admin.html';
+        }
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var data = getFormData();
+      var result = SCORING.calculate(data);
+      if (result.score < SEUIL) {
+        submitMessage.classList.remove('hidden');
+        return;
+      }
+
+      if (currentEditingId) {
+        CMS.updateArticle(currentEditingId, {
+          titre: data.titre,
+          sousTitre: data.sousTitre,
+          corps: data.corps,
+          titreSeo: data.titreSeo,
+          metaDescription: data.metaDescription,
+          motClePrincipal: data.motClePrincipal,
+          slug: data.slug || App.slugify(data.titre),
+          contenu: data.contenu,
+          score: result.score,
+          criteres: result.criteres,
+          imageData: data.imageData || null,
+        });
+        CMS.submitArticle(currentEditingId);
+      } else {
+        var article = CMS.addArticle({
+          titre: data.titre,
+          sousTitre: data.sousTitre,
+          corps: data.corps,
+          titreSeo: data.titreSeo,
+          metaDescription: data.metaDescription,
+          motClePrincipal: data.motClePrincipal,
+          slug: data.slug || App.slugify(data.titre),
+          contenu: data.contenu,
+          score: result.score,
+          criteres: result.criteres,
+          imageData: data.imageData || null,
+          authorUsername: auth.username,
+        });
+        CMS.submitArticle(article.id);
+      }
+
+      Swal.fire({
+        title: currentEditingId ? 'Article resoumis' : 'Article envoyé',
+        html: 'L\'article a bien été envoyé à l\'administrateur.<br>Il pourra le certifier ou le refuser.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#1d4ed8',
+      }).then(function() {
+        askRedirectToAdmin();
+      });
+
+      currentEditingId = null;
+      form.reset();
+      coverImageDataUrl = null;
+      imagePreview.classList.add('hidden');
+      btnRemoveImage.classList.add('hidden');
+      imageCoverInput.value = '';
+      document.getElementById('titreSeo-count').textContent = '0';
+      document.getElementById('meta-count').textContent = '0';
+      updateScore();
+      renderMyArticles();
+    });
+
+    updateScore();
+    renderMyArticles();
+  </script>
+</body>
+</html>
