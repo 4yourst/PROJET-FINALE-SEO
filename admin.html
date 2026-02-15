@@ -421,8 +421,8 @@
         cancelButtonColor: '#78716c',
         confirmButtonText: 'Certifier et publier',
         cancelButtonText: 'Annuler',
-      }).then(result => {
-        if (result.isConfirmed) {
+      }).then(swalResult => {
+        if (swalResult.isConfirmed) {
           CMS.certifyArticle(id, finalScore, result.criteres);
 
           Swal.fire({
@@ -435,8 +435,8 @@
             denyButtonText: 'Aller sur la page visiteur',
             confirmButtonColor: '#1d4ed8',
             denyButtonColor: '#78716c',
-          }).then(result => {
-            if (result.isDenied) {
+          }).then(navResult => {
+            if (navResult.isDenied) {
               window.location.href = 'index.html';
             } else {
               renderList();

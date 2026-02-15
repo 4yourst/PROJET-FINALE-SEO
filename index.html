@@ -182,7 +182,7 @@
     }
 
     function renderHome() {
-      const articles = CMS.getCertifiedArticles(); // Uniquement Certified
+      const articles = CMS.getCertifiedArticles().sort((a, b) => b.id - a.id); // Plus récent en premier (ID décroissant)
 
       // Date Header
       document.getElementById('header-date').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
