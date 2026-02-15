@@ -16,9 +16,12 @@
 </head>
 <body class="bg-stone-100 text-stone-800 min-h-screen">
   <header class="bg-white border-b border-stone-200 shadow-sm">
-    <div class="max-w-5xl mx-auto px-4 py-4">
-      <h1 class="text-xl font-bold text-stone-900">Administrateur</h1>
-      <p class="text-stone-500 text-sm mt-0.5">Validation des articles soumis – Refuser / Modifier / Certifier & publier</p>
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h1 class="text-xl font-bold text-stone-900">Administrateur</h1>
+        <p class="text-stone-500 text-sm mt-0.5">Validation des articles soumis – Refuser / Modifier / Certifier & publier</p>
+      </div>
+      <button type="button" id="btn-logout" class="px-4 py-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 font-medium rounded-lg transition-colors">Déconnexion</button>
     </div>
   </header>
 
@@ -29,10 +32,14 @@
     <p id="empty-message" class="text-stone-500 text-center py-12 hidden">Aucun article soumis pour le moment.</p>
   </main>
 
+  <script src="auth.js"></script>
   <script src="data.js"></script>
   <script src="scoring.js"></script>
   <script src="app.js"></script>
   <script>
+    if (!Auth.requireAdmin()) throw new Error('redirect');
+    document.getElementById('btn-logout').addEventListener('click', function() { Auth.logout(); });
+
     App.setRole('admin');
 
     const listEl = document.getElementById('submitted-list');
