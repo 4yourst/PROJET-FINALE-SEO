@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,18 +11,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Source Sans 3', sans-serif; }
-    .img-cover { object-fit: cover; }
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+    }
+
+    .img-cover {
+      object-fit: cover;
+    }
   </style>
 </head>
+
 <body class="bg-stone-100 text-stone-800 min-h-screen">
   <header class="bg-white border-b border-stone-200 shadow-sm">
     <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
       <div>
         <h1 class="text-xl font-bold text-stone-900">Administrateur</h1>
-        <p class="text-stone-500 text-sm mt-0.5">Validation des articles soumis – Refuser / Modifier / Certifier & publier</p>
+        <p class="text-stone-500 text-sm mt-0.5">Validation des articles soumis – Refuser / Modifier / Certifier &
+          publier</p>
       </div>
-      <button type="button" id="btn-logout" class="px-4 py-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 font-medium rounded-lg transition-colors">Déconnexion</button>
+      <button type="button" id="btn-logout"
+        class="px-4 py-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 font-medium rounded-lg transition-colors">Déconnexion</button>
     </div>
   </header>
 
@@ -38,7 +47,7 @@
   <script src="app.js"></script>
   <script>
     if (!Auth.requireAdmin()) throw new Error('redirect');
-    document.getElementById('btn-logout').addEventListener('click', function() { Auth.logout(); });
+    document.getElementById('btn-logout').addEventListener('click', function () { Auth.logout(); });
 
     App.setRole('admin');
 
@@ -61,8 +70,8 @@
       if ((sousTitre || '').trim()) {
         html += '<p>' + escapeHtml((sousTitre || '').trim()) + '</p>';
       }
-      var blocs = (corps || '').split(/\n\n+/).filter(function(s) { return s.trim(); });
-      blocs.forEach(function(bloc) {
+      var blocs = (corps || '').split(/\n\n+/).filter(function (s) { return s.trim(); });
+      blocs.forEach(function (bloc) {
         var line = bloc.trim().replace(/\n/g, ' ');
         line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
         html += '<p>' + line + '</p>';
@@ -428,7 +437,7 @@
             denyButtonColor: '#78716c',
           }).then(result => {
             if (result.isDenied) {
-              window.location.href = 'visitor.html';
+              window.location.href = 'index.html';
             } else {
               renderList();
             }
@@ -440,4 +449,5 @@
     renderList();
   </script>
 </body>
+
 </html>

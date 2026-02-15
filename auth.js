@@ -20,7 +20,7 @@ var Auth = {
   requireBlogger: function () {
     var auth = this.getAuth();
     if (!auth || auth.role !== 'blogger') {
-      window.location.href = 'index.html';
+      window.location.href = 'login.html';
       return false;
     }
     return true;
@@ -30,7 +30,7 @@ var Auth = {
   requireAdmin: function () {
     var auth = this.getAuth();
     if (!auth || auth.role !== 'admin') {
-      window.location.href = 'index.html';
+      window.location.href = 'login.html';
       return false;
     }
     return true;
@@ -39,6 +39,6 @@ var Auth = {
   /** Déconnexion : supprimer auth et rediriger vers la page de connexion */
   logout: function () {
     localStorage.removeItem('auth');
-    window.location.href = 'index.html';
+    window.location.href = 'login.html';
   },
 };

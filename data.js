@@ -22,7 +22,7 @@ const CMS = {
   save() {
     if (typeof localStorage === 'undefined') return;
     try {
-      const articlesForStorage = this.articles.map(function(a) {
+      const articlesForStorage = this.articles.map(function (a) {
         var rest = Object.assign({}, a);
         delete rest.imageData;
         return rest;
@@ -32,7 +32,7 @@ const CMS = {
         nextId: this.nextId,
       }));
       var imgObj = {};
-      this.articles.forEach(function(a) {
+      this.articles.forEach(function (a) {
         if (a.imageData) imgObj[a.id] = a.imageData;
       });
       try {
@@ -59,7 +59,7 @@ const CMS = {
       if (rawImg) {
         try {
           var imgObj = JSON.parse(rawImg);
-          this.articles.forEach(function(a) {
+          this.articles.forEach(function (a) {
             var data = imgObj[a.id] || imgObj[String(a.id)];
             if (data) a.imageData = data;
           });
@@ -97,7 +97,7 @@ const CMS = {
         titreSeo: 'Transition énergétique 2030 : objectifs et débats',
         contenu: `<h1>Transition énergétique : les objectifs 2030 en débat</h1>
 <p>La transition énergétique reste au cœur des politiques européennes. Les objectifs fixés pour 2030 font l'objet de vifs débats entre partisans d'une accélération et tenants d'un rythme plus mesuré.</p>
-<p>Les <a href="/visitor.html">énergies renouvelables</a> progressent chaque année, tandis que le <a href="/visitor.html">nucléaire</a> divise toujours. La <a href="/visitor.html">sobriété énergétique</a> devient un pilier des scénarios.</p>
+<p>Les <a href="/index.html">énergies renouvelables</a> progressent chaque année, tandis que le <a href="/index.html">nucléaire</a> divise toujours. La <a href="/index.html">sobriété énergétique</a> devient un pilier des scénarios.</p>
 <p>Cet article fait partie de notre dossier sur la transition énergétique et les objectifs climatiques.</p>`,
         metaDescription: 'Transition énergétique et objectifs 2030 : état des lieux, débats et perspectives en Europe. Enjeux climat et énergies renouvelables.',
         motClePrincipal: 'transition énergétique',
@@ -115,7 +115,7 @@ const CMS = {
         titreSeo: 'Réforme des retraites 2025 : ce qui change',
         contenu: `<h1>Réforme des retraites : ce qui change en 2025</h1>
 <p>La réforme des retraites entre en vigueur progressivement. Voici les principaux changements attendus pour 2025 et les années suivantes.</p>
-<p>L'âge légal, la durée de cotisation et les régimes spéciaux sont concernés. Consultez notre <a href="/visitor.html">guide pratique</a> et les <a href="/visitor.html">simulateurs</a> officiels.</p>
+<p>L'âge légal, la durée de cotisation et les régimes spéciaux sont concernés. Consultez notre <a href="/index.html">guide pratique</a> et les <a href="/index.html">simulateurs</a> officiels.</p>
 <p>Les syndicats et le gouvernement poursuivent le dialogue sur les conditions de travail et la pénibilité.</p>`,
         metaDescription: 'Réforme des retraites 2025 : âge légal, durée de cotisation, régimes spéciaux. Ce qui change pour les assurés.',
         motClePrincipal: 'réforme des retraites',
@@ -133,7 +133,7 @@ const CMS = {
         titreSeo: 'IA et régulation européenne : ce qu\'il faut savoir',
         contenu: `<h1>Intelligence artificielle : régulation européenne en place</h1>
 <p>Le règlement européen sur l'intelligence artificielle pose un cadre inédit. Les systèmes à haut risque seront encadrés, tandis que les usages interdits sont listés noir sur blanc.</p>
-<p>Les entreprises devront se conformer progressivement. Notre <a href="/visitor.html">décryptage</a> et nos <a href="/visitor.html">analyses</a> vous aident à y voir clair.</p>
+<p>Les entreprises devront se conformer progressivement. Notre <a href="/index.html">décryptage</a> et nos <a href="/index.html">analyses</a> vous aident à y voir clair.</p>
 <p>Transparence, droits des personnes et supervision nationale sont au programme.</p>`,
         metaDescription: 'Régulation européenne de l\'IA : cadre, systèmes à risque, interdictions. Ce qui change pour les entreprises et les citoyens.',
         motClePrincipal: 'intelligence artificielle',
@@ -151,7 +151,7 @@ const CMS = {
         titreSeo: 'Mobilité durable 2025 : aides à l\'achat vélo et véhicule',
         contenu: `<h1>Mobilité durable : les aides à l'achat en 2025</h1>
 <p>Bonus vélo, prime à la conversion, leasing social… Les dispositifs pour encourager la mobilité durable évoluent en 2025.</p>
-<p>Nous faisons le point sur les <a href="/visitor.html">aides vélo</a>, les <a href="/visitor.html">véhicules électriques</a> et les <a href="/visitor.html">transports en commun</a>.</p>
+<p>Nous faisons le point sur les <a href="/index.html">aides vélo</a>, les <a href="/index.html">véhicules électriques</a> et les <a href="/index.html">transports en commun</a>.</p>
 <p>Un dossier complet pour choisir en connaissance de cause.</p>`,
         metaDescription: 'Mobilité durable 2025 : bonus vélo, prime conversion, leasing. Toutes les aides à l\'achat pour se déplacer autrement.',
         motClePrincipal: 'mobilité durable',
@@ -169,7 +169,7 @@ const CMS = {
         titreSeo: 'Santé mentale au travail : obligations employeurs',
         contenu: `<h1>Santé mentale au travail : les obligations des employeurs</h1>
 <p>Le bien-être et la santé mentale au travail deviennent des sujets incontournables. Quelles sont les obligations légales et les bonnes pratiques pour les employeurs ?</p>
-<p>Risques psychosociaux, droit à la déconnexion et <a href="/visitor.html">prévention</a> : nous décryptons les <a href="/visitor.html">textes</a> et les <a href="/visitor.html">recommandations</a> en vigueur.</p>
+<p>Risques psychosociaux, droit à la déconnexion et <a href="/index.html">prévention</a> : nous décryptons les <a href="/index.html">textes</a> et les <a href="/index.html">recommandations</a> en vigueur.</p>
 <p>Un sujet essentiel pour les RH et les managers.</p>`,
         metaDescription: 'Santé mentale au travail : obligations des employeurs, RPS, prévention. Ce que dit la loi et les bonnes pratiques.',
         motClePrincipal: 'santé mentale au travail',

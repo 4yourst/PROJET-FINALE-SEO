@@ -31,7 +31,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
-                <a href="visitor.html" class="flex-shrink-0 flex items-center gap-3 group">
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-3 group">
                     <div
                         class="bg-red-700 w-10 h-10 flex items-center justify-center text-white font-bold text-xl font-serif rounded-sm group-hover:bg-red-800 transition-colors">
                         E</div>
@@ -42,7 +42,7 @@
 
                 <!-- Navigation (Desktop) -->
                 <nav class="hidden md:flex space-x-8">
-                    <a href="visitor.html"
+                    <a href="index.html"
                         class="text-sm font-semibold uppercase tracking-wide text-gray-500 hover:text-red-700 transition-colors border-b-2 border-transparent hover:border-red-700 py-1">Accueil</a>
                     <a href="#"
                         class="text-sm font-semibold uppercase tracking-wide text-gray-500 hover:text-red-700 transition-colors border-b-2 border-transparent hover:border-red-700 py-1">Politique</a>
@@ -75,7 +75,7 @@
 
         <!-- Fil d'ariane -->
         <nav class="flex items-center text-sm font-medium text-gray-500 mb-6">
-            <a href="visitor.html" class="hover:text-red-700 hover:underline">Accueil</a>
+            <a href="index.html" class="hover:text-red-700 hover:underline">Accueil</a>
             <span class="mx-2 text-gray-300">/</span>
             <span class="text-red-700 uppercase tracking-wide font-bold text-xs" id="article-category">Actualités</span>
         </nav>
@@ -224,7 +224,7 @@
 
             if (!articleId) {
                 alert("Aucun identifiant d'article fourni.");
-                window.location.href = 'visitor.html';
+                window.location.href = 'index.html';
                 return;
             }
 
@@ -236,7 +236,7 @@
            <div class="text-center py-20">
              <h1 class="text-3xl font-bold mb-4">Article introuvable</h1>
              <p class="text-gray-500 mb-6">L'article demandé n'existe pas ou a été supprimé.</p>
-             <a href="visitor.html" class="text-red-700 underline">Retour à l'accueil</a>
+             <a href="index.html" class="text-red-700 underline">Retour à l'accueil</a>
            </div>
          `;
                 return;
@@ -248,7 +248,7 @@
            <div class="text-center py-20">
              <h1 class="text-3xl font-bold mb-4">Article non disponible</h1>
              <p class="text-gray-500 mb-6">Cet article n'est pas encore publié.</p>
-             <a href="visitor.html" class="text-red-700 underline">Retour à l'accueil</a>
+             <a href="index.html" class="text-red-700 underline">Retour à l'accueil</a>
            </div>
          `;
                 return;
