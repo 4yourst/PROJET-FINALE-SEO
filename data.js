@@ -107,6 +107,9 @@ const CMS = {
         datePublication: formatDate(now),
         dateCreation: formatDate(new Date(now - 5 * 24 * 3600 * 1000)),
         criteres: {},
+        dateCreation: formatDate(new Date(now - 5 * 24 * 3600 * 1000)),
+        criteres: {},
+        category: 'Politique',
         seoFrozen: true,
       },
       {

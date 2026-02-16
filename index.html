@@ -11,6 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="tailwind-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-white min-h-screen text-gray-900 font-sans">
@@ -23,7 +24,7 @@
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 flex justify-between items-center text-xs text-gray-500 font-medium uppercase tracking-wide">
         <time id="header-date"></time>
         <div class="space-x-4">
-          <a href="#" class="hover:text-brand-green">S'abonner</a>
+          <button type="button" class="hover:text-brand-green btn-subscribe">S'abonner</button>
           <a href="login.html" class="hover:text-brand-green">Connexion</a>
         </div>
       </div>
@@ -79,21 +80,21 @@
     <!-- NavBar -->
     <nav class="border-t border-gray-100 hidden sm:block">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-center space-x-8 py-3">
-          <a href="index.html"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-brand-green border-b-2 border-brand-green pb-0.5">Accueil</a>
-          <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Politique</a>
-          <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Économie</a>
-          <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Entreprises</a>
-          <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Tech-Médias</a>
-          <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Société</a>
-          <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Monde</a>
+        <div class="flex justify-center space-x-8 py-3" id="main-nav">
+          <a href="#" data-cat="all"
+            class="nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-brand-green border-b-2 border-brand-green pb-0.5">Accueil</a>
+          <a href="#" data-cat="Politique"
+            class="nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Politique</a>
+          <a href="#" data-cat="Économie"
+            class="nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Économie</a>
+          <a href="#" data-cat="Entreprises"
+            class="nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Entreprises</a>
+          <a href="#" data-cat="Tech-Médias"
+            class="nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Tech-Médias</a>
+          <a href="#" data-cat="Société"
+            class="nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Société</a>
+          <a href="#" data-cat="Monde"
+            class="nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Monde</a>
         </div>
       </div>
     </nav>
@@ -143,7 +144,7 @@
           <p class="font-headline text-lg font-bold mb-2">Abonnez-vous</p>
           <p class="text-sm text-gray-500 mb-4">Accédez à tous nos articles en illimité.</p>
           <button
-            class="bg-brand-yellow text-black px-6 py-2 text-sm font-bold uppercase tracking-wide hover:brightness-95 transition-all">Je
+            class="bg-brand-yellow text-black px-6 py-2 text-sm font-bold uppercase tracking-wide hover:brightness-95 transition-all btn-subscribe">Je
             m'abonne</button>
         </div>
       </aside>
@@ -185,29 +186,59 @@
       return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }); // "12 oct."
     }
 
-    function renderHome() {
-      const articles = CMS.getCertifiedArticles().sort((a, b) => b.id - a.id); // Plus récent en premier (ID décroissant)
+    function renderHome(category = 'all') {
+      let articles = CMS.getCertifiedArticles().sort((a, b) => b.id - a.id);
 
-      // Date Header
+      // Filtering
+      if (category !== 'all') {
+        articles = articles.filter(a => a.category === category);
+      }
+
+      // Update Nav UI
+      document.querySelectorAll('.nav-item').forEach(el => {
+        const cat = el.dataset.cat;
+        if (cat === category) {
+          el.className = 'nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-brand-green border-b-2 border-brand-green pb-0.5';
+        } else {
+          el.className = 'nav-item text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green';
+        }
+      });
+
+      // Update Section Title
+      const sectionTitle = document.querySelector('#grid-section').previousElementSibling;
+      sectionTitle.textContent = category === 'all' ? 'En continu' : category;
+
+      // Date Header (unchanged)
       document.getElementById('header-date').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
       if (articles.length === 0) {
-        document.getElementById('hero-section').innerHTML = '<p class="text-center py-10 text-gray-500">Aucune actualité disponible pour le moment.</p>';
+        document.getElementById('hero-section').innerHTML = ''; // Clear hero
+        document.getElementById('grid-section').innerHTML = '<p class="text-center py-10 text-gray-500 col-span-2">Aucun article dans cette catégorie pour le moment.</p>';
         return;
       }
 
-      // Trier par date (déjà le cas souvent, mais assurons-nous) - optionnel ou par défaut
-      // On prend le premier pour la UNE
+      // Logic for Hero vs Grid vs List
+      // If filtering, we might want a simpler view, but keeping the "Hero + Grid" layout works fine for filtering too.
+      // We just take the first one as Hero.
+
       const heroArticle = articles[0];
-      const gridArticles = articles.slice(1, 5); // 4 articles suivants
-      const listArticles = articles.slice(5, 10); // 5 suivants pour la liste
+      const gridArticles = articles.slice(1, 5); // Next 4
+
+      // For the Sidebar list, if we are filtering, maybe we still want to show "Most Read" (random/mixed) or filtered?
+      // Standard UX: Main content filters, Sidebar often stays "Most Read" (global) or "Most Read in Category".
+      // Let's keep Sidebar as "Global Most Read" (simulated by taking all certified articles shuffle/slice) to keep sidebar populated.
+      // OR to be simple: Sidebar shows next articles of current filter. 
+      // User request implies "Functional categories", usually affects main feed.
+      // Let's make Sidebar show "Global" items to keep the page balanced even if category has few items.
+      const listArticles = CMS.getCertifiedArticles().sort(() => 0.5 - Math.random()).slice(0, 5);
+
 
       // 1. Rendu Hero
-      // Layout: Image à gauche (ou dessus mobile), Titre/Chapeau à droite
       const heroHTML = `
          <article class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start group cursor-pointer" onclick="location.href='article.html?id=${heroArticle.id}'">
             <div class="lg:col-span-8 order-2 lg:order-1 relative overflow-hidden aspect-[16/9] bg-gray-100">
                <img src="${getArticleImage(heroArticle, 0)}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${heroArticle.titre}">
+               <div class="absolute top-2 left-2 bg-brand-yellow text-black text-xs font-bold px-2 py-1 uppercase tracking-wider">${heroArticle.category || 'Actualité'}</div>
             </div>
             <div class="lg:col-span-4 order-1 lg:order-2 flex flex-col justify-center h-full py-2">
                <span class="text-brand-green font-bold uppercase text-xs tracking-wider mb-2">À la une</span>
@@ -232,6 +263,7 @@
             <article class="flex flex-col group cursor-pointer border-b border-gray-100 pb-6 md:border-none" onclick="location.href='article.html?id=${art.id}'">
                <div class="aspect-[3/2] bg-gray-100 mb-4 overflow-hidden relative">
                   <img src="${getArticleImage(art, art.id)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+                  <div class="absolute bottom-0 left-0 bg-white/90 px-2 py-1 text-xs font-bold text-gray-900 uppercase tracking-widest">${art.category || 'Actu'}</div>
                </div>
                <h3 class="font-headline text-xl font-bold leading-tight mb-2 group-hover:text-brand-green transition-colors">
                   ${art.titre}
@@ -245,7 +277,7 @@
       });
       document.getElementById('grid-section').innerHTML = gridHTML;
 
-      // 3. Rendu Liste (Sidebar)
+      // 3. Rendu Liste (Sidebar - Global)
       let listHTML = '';
       if (listArticles.length > 0) {
         listArticles.forEach((art, index) => {
@@ -254,6 +286,7 @@
                   <article class="group cursor-pointer flex gap-4" onclick="location.href='article.html?id=${art.id}'">
                      <span class="text-3xl font-bold text-gray-200 font-headline group-hover:text-brand-green transition-colors">${index + 1}</span>
                      <div>
+                        <span class="text-[10px] uppercase font-bold text-brand-golden mb-1 block text-brand-yellow tracking-wider">${art.category || ''}</span>
                         <h4 class="font-bold text-base leading-snug group-hover:text-brand-green transition-colors mb-1">
                            ${art.titre}
                         </h4>
@@ -263,15 +296,66 @@
                </li>
              `;
         });
-      } else {
-        // Fallback si pas assez d'articles
-        listHTML = '<li class="text-sm text-gray-400 italic">Pas d\'autres articles récents.</li>';
       }
       document.getElementById('list-section').innerHTML = listHTML;
     }
 
-    // Run
-    document.addEventListener('DOMContentLoaded', renderHome);
+    // Modal Subscription
+    function handleSubscribe() {
+      Swal.fire({
+        title: 'Abonnez-vous à Lagune Info',
+        html: `
+              <p class="text-sm text-gray-600 mb-4">Accédez à l'intégralité de nos articles et soutenez le journalisme indépendant.</p>
+              <input type="email" id="swal-input-email" class="swal2-input" placeholder="votre@email.com">
+          `,
+        showCancelButton: true,
+        confirmButtonText: 'Je m\'abonne',
+        confirmButtonColor: '#ffb929',
+        cancelButtonText: 'Plus tard',
+        cancelButtonColor: '#AFAFAF',
+        customClass: {
+          confirmButton: 'text-black font-bold'
+        },
+        preConfirm: () => {
+          const email = Swal.getPopup().querySelector('#swal-input-email').value;
+          if (!email) {
+            Swal.showValidationMessage('Veuillez entrer une adresse email valide');
+          }
+          return { email: email };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Merci !',
+            text: `Bienvenue parmi nos abonnés. Un email de confirmation a été envoyé à ${result.value.email}.`,
+            icon: 'success',
+            confirmButtonColor: '#83A697'
+          });
+        }
+      });
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHome('all');
+
+      // Nav Listeners
+      document.querySelectorAll('.nav-item').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const cat = link.dataset.cat;
+          renderHome(cat);
+        });
+      });
+
+      // Subscribe Listeners
+      document.querySelectorAll('.btn-subscribe').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          handleSubscribe();
+        });
+      });
+    });
 
   </script>
 </body>
