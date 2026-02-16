@@ -4,12 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Les Échos MVP - Actualités économiques et financières</title>
+  <title>Lagune Info – L'actualité économique et financière</title>
 
   <link rel="stylesheet" href="visitor.css">
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="tailwind-config.js"></script>
 </head>
 
 <body class="bg-white min-h-screen text-gray-900 font-sans">
@@ -22,8 +23,8 @@
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1 flex justify-between items-center text-xs text-gray-500 font-medium uppercase tracking-wide">
         <time id="header-date"></time>
         <div class="space-x-4">
-          <a href="#" class="hover:text-red-700">S'abonner</a>
-          <a href="login.html" class="hover:text-red-700">Connexion</a>
+          <a href="#" class="hover:text-brand-green">S'abonner</a>
+          <a href="login.html" class="hover:text-brand-green">Connexion</a>
         </div>
       </div>
     </div>
@@ -40,20 +41,23 @@
         </button>
 
         <!-- Logo -->
-        <a href="index.html" class="flex-shrink-0 flex items-center justify-center gap-3 group mx-auto sm:mx-0">
+        <a href="index.html" class="group flex items-center gap-3">
           <div
-            class="bg-red-700 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-white font-bold text-xl sm:text-2xl font-serif rounded-sm group-hover:bg-red-800 transition-colors">
-            E</div>
-          <span
-            class="font-headline text-2xl sm:text-4xl font-bold tracking-tighter text-gray-900 group-hover:text-red-700 transition-colors">Les
-            Échos</span>
+            class="bg-brand-green w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-white font-bold text-xl sm:text-2xl font-serif rounded-sm group-hover:bg-opacity-90 transition-colors">
+            LI
+          </div>
+          <div class="flex flex-col">
+            <span class="text-2xl sm:text-3xl font-bold font-serif leading-none tracking-tight text-brand-ink">Lagune
+              <span class="text-brand-yellow">.</span> Info</span>
+            <span class="text-xs font-sans text-brand-gray tracking-widest uppercase mt-0.5">L'actualité en
+              continu</span>
+          </div>
         </a>
-
         <!-- Search Icon (Desktop) -->
         <div class="hidden sm:flex items-center">
           <div class="relative">
             <input type="text" placeholder="Rechercher..."
-              class="pl-3 pr-8 py-1.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-red-700 w-48 transition-all focus:w-64">
+              class="pl-3 pr-8 py-1.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-brand-green w-48 transition-all focus:w-64">
             <svg class="w-4 h-4 absolute right-3 top-2.5 text-gray-400" fill="none" stroke="currentColor"
               viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -77,19 +81,19 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-center space-x-8 py-3">
           <a href="index.html"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-red-700 border-b-2 border-red-700 pb-0.5">Accueil</a>
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-brand-green border-b-2 border-brand-green pb-0.5">Accueil</a>
           <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Politique</a>
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Politique</a>
           <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Économie</a>
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Économie</a>
           <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Entreprises</a>
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Entreprises</a>
           <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Tech-Médias</a>
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Tech-Médias</a>
           <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Société</a>
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Société</a>
           <a href="#"
-            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-red-700 transition-colors pb-0.5 border-b-2 border-transparent hover:border-red-700">Monde</a>
+            class="text-xs lg:text-sm font-bold uppercase tracking-widest text-gray-600 hover:text-brand-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-brand-green">Monde</a>
         </div>
       </div>
     </nav>
@@ -118,7 +122,7 @@
       <!-- Colonne Principale (Grille) -->
       <div class="lg:col-span-8">
         <h3
-          class="font-sans font-bold text-red-700 uppercase tracking-widest text-xs mb-6 border-b border-red-700 inline-block pb-1">
+          class="font-sans font-bold text-brand-green uppercase tracking-widest text-xs mb-6 border-b border-brand-green inline-block pb-1">
           En continu</h3>
         <div id="grid-section" class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <!-- Injecté par JS -->
@@ -139,7 +143,7 @@
           <p class="font-headline text-lg font-bold mb-2">Abonnez-vous</p>
           <p class="text-sm text-gray-500 mb-4">Accédez à tous nos articles en illimité.</p>
           <button
-            class="bg-red-700 text-white px-6 py-2 text-sm font-bold uppercase tracking-wide hover:bg-black transition-colors">Je
+            class="bg-brand-yellow text-black px-6 py-2 text-sm font-bold uppercase tracking-wide hover:brightness-95 transition-all">Je
             m'abonne</button>
         </div>
       </aside>
@@ -148,9 +152,9 @@
 
   </main>
 
-  <footer class="bg-gray-900 text-white border-t-4 border-red-700 mt-20">
+  <footer class="bg-gray-900 text-white border-t-4 border-brand-green mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center text-sm text-gray-400">
-      <p class="mb-4">&copy; 2026 Les Échos MVP. Site de démonstration pour projet pédagogique.</p>
+      <p class="mb-4">&copy; 2026 Lagune Info. Site de démonstration pour projet pédagogique.</p>
     </div>
   </footer>
 
@@ -206,8 +210,8 @@
                <img src="${getArticleImage(heroArticle, 0)}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${heroArticle.titre}">
             </div>
             <div class="lg:col-span-4 order-1 lg:order-2 flex flex-col justify-center h-full py-2">
-               <span class="text-red-700 font-bold uppercase text-xs tracking-wider mb-2">À la une</span>
-               <h1 class="font-headline text-3xl sm:text-4xl lg:text-4xl font-bold leading-tight mb-4 group-hover:text-red-700 transition-colors">
+               <span class="text-brand-green font-bold uppercase text-xs tracking-wider mb-2">À la une</span>
+               <h1 class="font-headline text-3xl sm:text-4xl lg:text-4xl font-bold leading-tight mb-4 group-hover:text-brand-green transition-colors">
                   ${heroArticle.titre}
                </h1>
                <p class="font-serif-text text-gray-600 text-lg leading-relaxed mb-4 line-clamp-4">
@@ -229,7 +233,7 @@
                <div class="aspect-[3/2] bg-gray-100 mb-4 overflow-hidden relative">
                   <img src="${getArticleImage(art, art.id)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
                </div>
-               <h3 class="font-headline text-xl font-bold leading-tight mb-2 group-hover:text-red-700 transition-colors">
+               <h3 class="font-headline text-xl font-bold leading-tight mb-2 group-hover:text-brand-green transition-colors">
                   ${art.titre}
                </h3>
                <p class="text-gray-500 text-sm line-clamp-2 leading-relaxed mb-3">
@@ -248,9 +252,9 @@
           listHTML += `
                <li class="pt-4 first:pt-0">
                   <article class="group cursor-pointer flex gap-4" onclick="location.href='article.html?id=${art.id}'">
-                     <span class="text-3xl font-bold text-gray-200 font-headline group-hover:text-red-700 transition-colors">${index + 1}</span>
+                     <span class="text-3xl font-bold text-gray-200 font-headline group-hover:text-brand-green transition-colors">${index + 1}</span>
                      <div>
-                        <h4 class="font-bold text-base leading-snug group-hover:text-red-700 transition-colors mb-1">
+                        <h4 class="font-bold text-base leading-snug group-hover:text-brand-green transition-colors mb-1">
                            ${art.titre}
                         </h4>
                         <time class="text-xs text-gray-400 uppercase tracking-wide">${formatDate(art.datePublication)}</time>

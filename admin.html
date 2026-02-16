@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administrateur – Validation des articles</title>
+  <title>Administration – Lagune Info</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="tailwind-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,23 +23,45 @@
 </head>
 
 <body class="bg-stone-100 text-stone-800 min-h-screen">
-  <header class="bg-white border-b border-stone-200 shadow-sm">
-    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h1 class="text-xl font-bold text-stone-900">Administrateur</h1>
-        <p class="text-stone-500 text-sm mt-0.5">Validation des articles soumis – Refuser / Modifier / Certifier &
-          publier</p>
+  <header class="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div
+          class="bg-brand-green w-8 h-8 flex items-center justify-center text-white font-bold font-serif rounded-sm shadow-sm">
+          LI</div>
+        <span class="font-serif font-bold text-xl text-brand-ink leading-none">Lagune <span
+            class="text-brand-yellow">.</span> Info</span>
+        <span class="hidden sm:inline mx-2 text-stone-300 text-xl font-light">|</span>
+        <span class="hidden sm:inline text-stone-500 font-medium">Administration</span>
       </div>
-      <button type="button" id="btn-logout"
-        class="px-4 py-2 text-stone-600 hover:text-stone-900 hover:bg-stone-100 font-medium rounded-lg transition-colors">Déconnexion</button>
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-stone-500 hidden md:inline">Connecté en tant que <strong
+            class="text-brand-green">Admin</strong></span>
+        <button type="button" id="btn-logout"
+          class="px-4 py-2 text-sm text-stone-600 hover:text-stone-900 hover:bg-stone-100 font-medium rounded-lg transition-colors border border-transparent hover:border-stone-200">Déconnexion</button>
+      </div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 py-8">
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-2xl font-bold font-serif text-stone-900">Tableau de bord</h2>
+        <p class="text-stone-500 text-sm">Gérez les publications et validez les soumissions.</p>
+      </div>
+      <div class="hidden sm:block">
+        <span
+          class="inline-flex items-center px-3 py-1 bg-brand-green/10 text-brand-green text-xs font-bold uppercase tracking-wider rounded-full">Zone
+          de validation</span>
+      </div>
+    </div>
+
     <section id="submitted-list" class="space-y-6">
       <!-- Liste des articles soumis -->
     </section>
-    <p id="empty-message" class="text-stone-500 text-center py-12 hidden">Aucun article soumis pour le moment.</p>
+    <p id="empty-message"
+      class="text-stone-500 text-center py-12 hidden bg-white rounded-lg border border-stone-200 shadow-sm">Aucun
+      article en attente de validation.</p>
   </main>
 
   <script src="auth.js"></script>
@@ -93,41 +116,50 @@
         // Calcul d'un bonus admin léger (+2%)
         const adminScore = Math.min(100, result.score + 2);
         return `
-          <article class="bg-white rounded-lg border border-stone-200 shadow-sm overflow-hidden" data-id="${art.id}">
-            <div class="p-6 border-b border-stone-100 bg-stone-50/50">
+          <article class="bg-white rounded-lg border border-stone-200 shadow-sm overflow-hidden relative group transition-all hover:shadow-md" data-id="${art.id}">
+            <div class="absolute top-0 left-0 w-1 h-full bg-brand-yellow"></div>
+            <div class="p-6 border-b border-stone-100 bg-stone-50/30">
               <div class="flex flex-wrap items-start justify-between gap-4">
                 <div class="flex-1 min-w-0">
-                  <h2 class="text-lg font-bold text-stone-900">${escapeHtml(art.titre)}</h2>
-                  <p class="text-sm text-stone-500 mt-1">ID ${art.id} · Soumis</p>
-                  <p class="text-stone-600 text-sm mt-2">${escapeHtml(App.getExcerpt(art.contenu, 150))}</p>
+                   <div class="flex items-center gap-2 mb-1">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-stone-100 text-stone-600">ID #${art.id}</span>
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">Soumis le ${new Date().toLocaleDateString()}</span>
+                   </div>
+                  <h2 class="text-lg font-bold text-stone-900 font-serif">${escapeHtml(art.titre)}</h2>
+                  <p class="text-stone-600 text-sm mt-2 line-clamp-2">${escapeHtml(App.getExcerpt(art.contenu, 150))}</p>
                 </div>
-                <div class="flex items-center gap-2">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${adminScore >= 66 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">Score : ${adminScore} %</span>
+                <div class="flex flex-col items-end gap-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold border ${adminScore >= 66 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}">
+                    SEO ${adminScore}%
+                  </span>
                 </div>
               </div>
             </div>
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h3 class="text-sm font-semibold text-stone-700 mb-2">Détail SEO (critères)</h3>
-                <ul class="space-y-1.5 text-sm">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-stone-400 mb-3">Critères SEO</h3>
+                <ul class="space-y-2 text-sm">
                   ${details.map(d => `
-                    <li class="flex items-center gap-2">
-                      <span class="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-xs ${d.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">${d.ok ? '✓' : '✗'}</span>
-                      ${d.label}
+                    <li class="flex items-center gap-2.5">
+                      <span class="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${d.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-red-50 text-red-600 border border-red-100'}">${d.ok ? '✓' : '✕'}</span>
+                      <span class="${d.ok ? 'text-stone-700' : 'text-stone-500'}">${d.label}</span>
                     </li>
                   `).join('')}
                 </ul>
               </div>
-              <div>
-                <p class="text-xs text-stone-500 mb-1">Titre SEO : ${escapeHtml(art.titreSeo || '–')}</p>
-                <p class="text-xs text-stone-500 mb-1">Meta : ${escapeHtml((art.metaDescription || '').slice(0, 80))}…</p>
-                <p class="text-xs text-stone-500">Mot-clé : ${escapeHtml(art.motClePrincipal || '–')}</p>
+              <div class="bg-stone-50 rounded p-4 text-sm border border-stone-100">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-stone-400 mb-2">Métadonnées</h3>
+                <div class="space-y-2">
+                    <p class="text-stone-600"><strong class="font-medium text-stone-900">Titre SEO:</strong> ${escapeHtml(art.titreSeo || '–')}</p>
+                    <p class="text-stone-600"><strong class="font-medium text-stone-900">Méta:</strong> <span class="italic">${escapeHtml((art.metaDescription || '').slice(0, 80))}…</span></p>
+                    <p class="text-stone-600"><strong class="font-medium text-stone-900">Mot-clé:</strong> <span class="bg-white px-1.5 py-0.5 rounded border border-stone-200">${escapeHtml(art.motClePrincipal || '–')}</span></p>
+                </div>
               </div>
             </div>
-            <div class="px-6 py-4 bg-stone-50 border-t border-stone-200 flex flex-wrap gap-3">
-              <button type="button" class="btn-refuse px-4 py-2 bg-red-100 text-red-800 font-medium rounded-lg hover:bg-red-200 transition-colors" data-id="${art.id}">Refuser</button>
-              <button type="button" class="btn-modify px-4 py-2 bg-amber-100 text-amber-800 font-medium rounded-lg hover:bg-amber-200 transition-colors" data-id="${art.id}">Modifier & optimiser</button>
-              <button type="button" class="btn-certify px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors" data-id="${art.id}">Certifier & publier</button>
+            <div class="px-6 py-4 bg-gray-50 border-t border-stone-200 flex flex-wrap gap-3 justify-end">
+              <button type="button" class="btn-refuse px-4 py-2 bg-white border border-stone-300 text-red-700 font-medium rounded-lg hover:bg-red-50 hover:border-red-200 transition-all shadow-sm" data-id="${art.id}">Refuser</button>
+              <button type="button" class="btn-modify px-4 py-2 bg-white border border-stone-300 text-stone-700 font-medium rounded-lg hover:bg-stone-50 hover:border-stone-400 transition-all shadow-sm" data-id="${art.id}">Modifier</button>
+              <button type="button" class="btn-certify px-5 py-2 bg-brand-yellow text-black font-bold rounded-lg hover:brightness-105 hover:shadow transition-all shadow-sm" data-id="${art.id}">Certifier & publier</button>
             </div>
           </article>
         `;
@@ -160,25 +192,25 @@
       let corps = art.corps || '';
 
       formEl = document.createElement('div');
-      formEl.className = 'admin-edit-form px-6 py-4 bg-blue-50 border-t border-blue-200';
+      formEl.className = 'admin-edit-form px-6 py-4 bg-gray-50 border-t border-brand-green';
       formEl.innerHTML = `
         <h4 class="font-semibold text-stone-800 mb-4">Modifier l'article – Optimisation complète</h4>
         
         <!-- Section Contenu structuré -->
-        <div class="mb-6 pb-6 border-b border-blue-200">
+        <div class="mb-6 pb-6 border-b border-gray-200">
           <h5 class="text-sm font-semibold text-stone-700 mb-3">1. Contenu de l'article</h5>
           <div class="space-y-3 text-sm">
             <div>
               <label class="block text-stone-600 mb-0.5">Titre affiché</label>
-              <input type="text" class="edit-titre w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(titre)}">
+              <input type="text" class="edit-titre w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green" value="${escapeHtml(titre)}">
             </div>
             <div>
               <label class="block text-stone-600 mb-0.5">Sous-titre (optionnel)</label>
-              <input type="text" class="edit-sousTitre w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(sousTitre)}">
+              <input type="text" class="edit-sousTitre w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green" value="${escapeHtml(sousTitre)}">
             </div>
             <div>
               <label class="block text-stone-600 mb-0.5">Corps de l'article</label>
-              <textarea class="edit-corps w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono text-xs" rows="6">${escapeHtml(corps)}</textarea>
+              <textarea class="edit-corps w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green font-mono text-xs" rows="6">${escapeHtml(corps)}</textarea>
               <p class="text-xs text-stone-500 mt-1">Paragraphes séparés par une ligne vide. Liens : [texte](url)</p>
             </div>
           </div>
@@ -190,43 +222,43 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
             <div>
               <label class="block text-stone-600 mb-0.5">Titre SEO (≤ 60 car.)</label>
-              <input type="text" class="edit-titreSeo w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(art.titreSeo || '')}" maxlength="60">
+              <input type="text" class="edit-titreSeo w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green" value="${escapeHtml(art.titreSeo || '')}" maxlength="60">
               <p class="text-xs text-stone-500 mt-0.5"><span class="seo-count-titulo">0</span> / 60</p>
             </div>
             <div>
               <label class="block text-stone-600 mb-0.5">Mot-clé principal</label>
-              <input type="text" class="edit-motClePrincipal w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(art.motClePrincipal || '')}">
+              <input type="text" class="edit-motClePrincipal w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green" value="${escapeHtml(art.motClePrincipal || '')}">
             </div>
           </div>
           <div class="grid grid-cols-1 gap-3 text-sm mt-3">
             <div>
               <label class="block text-stone-600 mb-0.5">Méta-description (120–160 car.)</label>
-              <textarea class="edit-metaDescription w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" rows="2" maxlength="160">${escapeHtml(art.metaDescription || '')}</textarea>
+              <textarea class="edit-metaDescription w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green" rows="2" maxlength="160">${escapeHtml(art.metaDescription || '')}</textarea>
               <p class="text-xs text-stone-500 mt-0.5"><span class="seo-count-meta">0</span> / 160 (idéal : 120–160)</p>
             </div>
           </div>
         </div>
 
         <!-- Section Champs SEO avancés (Admin uniquement) -->
-        <div class="mb-6 pb-6 border-b border-blue-200">
+        <div class="mb-6 pb-6 border-b border-gray-200">
           <h5 class="text-sm font-semibold text-stone-700 mb-3 flex items-center gap-2">
-            <span class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded">ADMIN</span>
+            <span class="text-xs bg-brand-green text-white px-2 py-0.5 rounded">ADMIN</span>
             Champs SEO avancés
           </h5>
-          <div class="space-y-3 text-sm bg-white p-3 rounded border border-blue-100">
+          <div class="space-y-3 text-sm bg-white p-3 rounded border border-gray-200">
             <div>
               <label class="block text-stone-600 mb-0.5">Slug / URL SEO-friendly</label>
-              <input type="text" class="edit-slug w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500 font-mono text-sm" value="${escapeHtml(art.slug || '')}">
+              <input type="text" class="edit-slug w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green font-mono text-sm" value="${escapeHtml(art.slug || '')}">
               <p class="text-xs text-stone-500 mt-0.5">Format : mon-article-seo (minuscules, tirets)</p>
             </div>
             <div>
               <label class="block text-stone-600 mb-0.5">Mots-clés secondaires</label>
-              <input type="text" class="edit-motsClesSecondaires w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" value="${escapeHtml(art.motsClesSecondaires || '')}" placeholder="Séparés par des virgules">
+              <input type="text" class="edit-motsClesSecondaires w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green" value="${escapeHtml(art.motsClesSecondaires || '')}" placeholder="Séparés par des virgules">
               <p class="text-xs text-stone-500 mt-0.5">Mots-clés secondaires pour enrichir la sémantique</p>
             </div>
             <div>
               <label class="block text-stone-600 mb-0.5">Extrait optimisé (optionnel)</label>
-              <textarea class="edit-excerptOptimise w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-blue-500" rows="2" maxlength="160">${escapeHtml(art.excerptOptimise || '')}</textarea>
+              <textarea class="edit-excerptOptimise w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-2 focus:ring-brand-green" rows="2" maxlength="160">${escapeHtml(art.excerptOptimise || '')}</textarea>
               <p class="text-xs text-stone-500 mt-0.5">Aperçu enrichi pour les résultats de recherche</p>
             </div>
           </div>
@@ -251,7 +283,7 @@
         </div>
 
         <div class="flex gap-2">
-          <button type="button" class="btn-save-modify px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors" data-id="${id}">Enregistrer les modifications</button>
+          <button type="button" class="btn-save-modify px-4 py-2 bg-brand-green text-white rounded-lg font-medium hover:bg-opacity-90 transition-colors" data-id="${id}">Enregistrer les modifications</button>
           <button type="button" class="btn-cancel-modify px-4 py-2 bg-stone-200 text-stone-700 rounded-lg font-medium hover:bg-stone-300">Annuler</button>
         </div>
       `;
@@ -388,7 +420,7 @@
             html: 'L\'article a été renvoyé au rédacteur.<br>Le statut a changé en "Refusé".',
             icon: 'info',
             confirmButtonText: 'OK',
-            confirmButtonColor: '#1d4ed8',
+            confirmButtonColor: '#83A697',
           }).then(() => {
             renderList();
           });
@@ -433,7 +465,7 @@
             showDenyButton: true,
             confirmButtonText: 'Rester ici',
             denyButtonText: 'Aller sur la page visiteur',
-            confirmButtonColor: '#1d4ed8',
+            confirmButtonColor: '#83A697',
             denyButtonColor: '#78716c',
           }).then(navResult => {
             if (navResult.isDenied) {
