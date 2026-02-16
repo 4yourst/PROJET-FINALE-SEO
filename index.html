@@ -237,7 +237,7 @@
       const heroHTML = `
          <article class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start group cursor-pointer" onclick="location.href='article.html?id=${heroArticle.id}'">
             <div class="lg:col-span-8 order-2 lg:order-1 relative overflow-hidden aspect-[16/9] bg-gray-100">
-               <img src="${getArticleImage(heroArticle, 0)}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${heroArticle.titre}">
+               <img src="${getArticleImage(heroArticle, 0)}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${heroArticle.imageAlt || heroArticle.titre}">
                <div class="absolute top-2 left-2 bg-brand-yellow text-black text-xs font-bold px-2 py-1 uppercase tracking-wider">${heroArticle.category || 'Actualité'}</div>
             </div>
             <div class="lg:col-span-4 order-1 lg:order-2 flex flex-col justify-center h-full py-2">
@@ -262,7 +262,7 @@
         gridHTML += `
             <article class="flex flex-col group cursor-pointer border-b border-gray-100 pb-6 md:border-none" onclick="location.href='article.html?id=${art.id}'">
                <div class="aspect-[3/2] bg-gray-100 mb-4 overflow-hidden relative">
-                  <img src="${getArticleImage(art, art.id)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+                  <img src="${getArticleImage(art, art.id)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" alt="${art.imageAlt || art.titre}">
                   <div class="absolute bottom-0 left-0 bg-white/90 px-2 py-1 text-xs font-bold text-gray-900 uppercase tracking-widest">${art.category || 'Actu'}</div>
                </div>
                <h3 class="font-headline text-xl font-bold leading-tight mb-2 group-hover:text-brand-green transition-colors">

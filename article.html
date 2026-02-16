@@ -262,7 +262,9 @@
             document.getElementById('article-title').textContent = article.titre;
             document.getElementById('article-date').textContent = new Date(article.datePublication).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('article-date').setAttribute('datetime', article.datePublication);
-            document.getElementById('article-image').src = getArticleImage(article);
+            const imgEl = document.getElementById('article-image');
+            imgEl.src = getArticleImage(article);
+            imgEl.alt = article.imageAlt || article.titre; // Fallback au titre si pas d'ALT
             document.getElementById('article-body').innerHTML = article.contenu; // Attention XSS si data non sûre, mais ici data js locale
 
             // Gestion simple des catégories (mock pour l'exemple)
